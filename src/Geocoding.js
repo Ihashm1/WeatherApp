@@ -31,6 +31,7 @@ const Geocoding = () => {
         e.preventDefault();
         fetchData();
     };
+
     return (
         <div>
             <form onSubmit={handleSubmit}>
@@ -44,16 +45,15 @@ const Geocoding = () => {
                     <h2>Name: {locationData.name}</h2>
                     <p>Latitude: {locationData.latitude}</p>
                     <p>Longitude: {locationData.longitude}</p>
-                </>
-            ):(
-                <p>Loading Data...</p>
-            )}
-            {locationData ? (
                     <Weather
                         latitude={locationData.latitude}
                         longitude={locationData.longitude}
                     />
-                    ) : ""}
+                </>
+                
+            ):(
+                <p>Loading Data...</p>
+            )}
         </div>
     );
 };
