@@ -6,7 +6,6 @@ const App = () => {
         <div>
             <h1>Weather Forecast App</h1>
             <Geocoding />
-            <Weather />
         </div>
     );
 };
