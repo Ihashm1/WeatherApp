@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Weather from './Weather';
 
 const Geocoding = () => {
     const [location, setLocation] = useState('');
@@ -17,6 +18,9 @@ const Geocoding = () => {
     };
 
     useEffect(() => {
+        if(location === ''){
+            return
+        }
         fetchData();
     }, []);
 
@@ -44,6 +48,12 @@ const Geocoding = () => {
             ):(
                 <p>Loading Data...</p>
             )}
+            {locationData ? (
+                    <Weather
+                        latitude={locationData.latitude}
+                        longitude={locationData.longitude}
+                    />
+                    ) : ""}
         </div>
     );
 };
