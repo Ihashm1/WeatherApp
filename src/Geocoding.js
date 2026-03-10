@@ -7,10 +7,8 @@ const Geocoding = () => {
 
     const fetchData = async () => {
         try{
-            const response = await axios.get('https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=1', {
-                headers: {"Access-Control-Allow-Origin": "https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=1"}
-            })
-            setLocationData(response.data);
+            const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=1`)
+            setLocationData(response.data.results[0]);
             console.log(response.data);
         }
         catch (error) {
@@ -39,10 +37,12 @@ const Geocoding = () => {
             </form>
             {locationData ? (
                 <>
-                <h2>{locationData.name}</h2>
+                    <h2>Name: {locationData.name}</h2>
+                    <p>Latitude: {locationData.latitude}</p>
+                    <p>Longitude: {locationData.longitude}</p>
                 </>
             ):(
-                <p></p>
+                <p>Loading Data...</p>
             )}
         </div>
     );
