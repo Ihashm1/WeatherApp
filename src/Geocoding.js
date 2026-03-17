@@ -13,7 +13,7 @@ const Geocoding = () => {
             setLocationData(response.data.results[0]);
             setLocationsArr(response.data.results);
             //console.log(response.data);
-            console.log(response.data.results);
+            //console.log(response.data.results);
         }
         catch (error) {
             console.error(error);
@@ -53,7 +53,10 @@ const Geocoding = () => {
                     <h2>Suggestions</h2>
                     <ul>
                         {locationsArr.map((locationItem, index) => (
-                            <li key={index}>{locationItem.name + ", " + locationItem.admin2 + ", " + locationItem.admin1 + ", " + locationItem.country}</li>
+                            <li key={index}><button onClick={function handleClick(){
+                                setLocationData(locationsArr[index]);
+                            }}>
+                                {locationItem.name + ", " + locationItem.admin2 + ", " + locationItem.admin1 + ", " + locationItem.country}</button></li>
                         ))}
                     </ul>
                     <h2>Name: {locationData.name}</h2>
