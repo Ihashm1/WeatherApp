@@ -29,6 +29,8 @@ const Geocoding = () => {
 
     const handleInputChange = (e) => {
         setLocation(e.target.value);
+        e.preventDefault();
+        fetchData();
     };
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -37,12 +39,15 @@ const Geocoding = () => {
 
     return (
         <div>
+            {
             <form onSubmit={handleSubmit}>
                 <input type='text' placeholder='Enter Location' 
                 value={location} onChange={handleInputChange}>
                 </input>
                 <button type='submit'>Search</button>
             </form>
+            }
+
             {locationData ? (
                 <>
                     <h2>Suggestions</h2>
