@@ -53,7 +53,7 @@ const Geocoding = () => {
                     <h2>Suggestions</h2>
                     <ul>
                         {locationsArr.map((locationItem, index) => (
-                            <li key={index}>{locationItem.name + ", " + locationItem.admin2 + ", " + locationItem.admin1}</li>
+                            <li key={index}>{locationItem.name + ", " + locationItem.admin2 + ", " + locationItem.admin1 + ", " + locationItem.country}</li>
                         ))}
                     </ul>
                     <h2>Name: {locationData.name}</h2>
