@@ -1,9 +1,9 @@
 import React from 'react';
 const safety = ["blue", "green", "orange", "red"];
-const ForecastButton = ({safetynum, numval, units, text}) => {
+const ForecastButton = ({safetynum, numval, units, text, click}) => {
   console.log("button");
   return( 
-    <button style={{backgroundColor: safety[safetynum]}}>
+    <button onClick={click} style={{backgroundColor: safety[safetynum]}}>
       <div>
         <div>
           {numval}{units}

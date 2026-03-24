@@ -3,12 +3,17 @@ import { useState } from 'react';
 import Weather from './Weather';
 import Geocoding from './Geocoding';
 import FutureWeather from './futureWeather';
-
+import ForecastButton from './forecastButton';
+import LineChart from './graphDisplay';
 
 const App = () => {
 
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
+
+    const drawGraph = () =>{
+        console.log("drawing");
+    }
 
     return (
         <div>
@@ -35,7 +40,14 @@ const App = () => {
 
             {weatherData?(
                 <>
-                <p>{Object.entries(weatherData.forecast)}</p>
+                <ForecastButton
+                    safetynum={0}
+                    numval={weatherData.forecast.current[2][1]}
+                    units={"C"}
+                    text={"Temperature"}
+                    click={drawGraph}
+                />
+                <p>{/*weatherData.forecast.current[2][1]*/}</p>
                 </>
             ):(
                 <p>Weatherdata array:</p>
