@@ -23,11 +23,8 @@ const Weather = (props) => {
                 hourly_units: Object.entries(response.data.hourly_units)
             }
             setForecastArr(farray);
-            const warray ={
-                forecast: forecastArr,
-                marine: marineArr
-            }
-            props.sendData(warray);
+            
+            props.sendData({forecast:forecastArr, marine:marineArr});
         }
         catch (error) {
             console.error(error);
@@ -51,11 +48,8 @@ const Weather = (props) => {
                 hourly_units: Object.entries(response.data.hourly_units)
             }
             setMarineArr(marray);
-            const warray ={
-                forecast: forecastArr,
-                marine: marineArr
-            }
-            props.sendData(warray);
+            
+            props.sendData({forecast:forecastArr, marine:marineArr});
             
         }
         catch (error) {
