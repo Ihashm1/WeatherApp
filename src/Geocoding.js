@@ -12,6 +12,8 @@ const Geocoding = (props) => {
     const [inputFocused, setInputFocused] = useState(false);
     const [placeholder, setPlaceholder] = useState("Enter Location");
 
+    const [userLocation, setUserLocation] = useState(null);
+
     const fetchData = async () => {
         if (!location){return;}
         try{
@@ -66,6 +68,31 @@ const Geocoding = (props) => {
         setLocation("");
     }
 
+    const getUserLocation = () => {
+        setLocation("");
+        setPlaceholder("Current Location");
+        
+        if (navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(
+                (position)=>{
+                    setUserLocation(position.coords);
+                    {userLocation && (
+                        props.sendData(userLocation)
+                    )}
+                    console.log(position.coords)
+                },
+                (error)=>{
+                    console.log(error.message)
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0,    
+                }
+            )
+        }
+    }
+
     return (
         <div className="" id="geocoding">
             {
@@ -80,6 +107,7 @@ const Geocoding = (props) => {
                             <button 
                                 type="button"
                                 className="btn btn-light border border-light-emphasis"
+                                onClick={getUserLocation}
                             >📍</button>
                             <input 
                                 type='text' 
@@ -89,7 +117,7 @@ const Geocoding = (props) => {
                                 className="form-control bg-light"
                                 onFocus={handleInputFocus}>
                             </input>
-                            <span class="input-group-text bg-light">🔍</span>
+                            <span className="input-group-text bg-light">🔍</span>
                         </div>
                     </div>
                     {/*
