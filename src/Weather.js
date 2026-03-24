@@ -24,13 +24,29 @@ const Weather = (props) => {
             }
             setForecastArr(farray);
             
-            props.sendData({forecast:forecastArr, marine:marineArr});
+            const response2 = await axios.get(`https://marine-api.open-meteo.com/v1/marine?latitude=${props.latitude}&longitude=${props.longitude}&daily=wave_height_max,wave_direction_dominant,swell_wave_height_max,swell_wave_direction_dominant&hourly=wave_height,sea_level_height_msl,wave_direction,swell_wave_height,swell_wave_direction,sea_surface_temperature&current=wave_height,wave_direction,sea_level_height_msl,sea_surface_temperature,swell_wave_direction,swell_wave_height`)
+
+            if(!response2.data){
+                return
+            }
+            
+            const marray = {
+                current: Object.entries(response2.data.current),
+                current_units: Object.entries(response2.data.current_units),
+                daily: Object.entries(response2.data.daily),
+                daily_units: Object.entries(response2.data.daily_units),
+                hourly: Object.entries(response2.data.hourly),
+                hourly_units: Object.entries(response2.data.hourly_units)
+            }
+            setMarineArr(marray);
+
+            props.sendData({forecast:farray, marine:marray});
         }
         catch (error) {
             console.error(error);
         }
     };
-
+/*
     const fetchMarineData = async () => {
         try{
             const response = await axios.get(`https://marine-api.open-meteo.com/v1/marine?latitude=${props.latitude}&longitude=${props.longitude}&daily=wave_height_max,wave_direction_dominant,swell_wave_height_max,swell_wave_direction_dominant&hourly=wave_height,sea_level_height_msl,wave_direction,swell_wave_height,swell_wave_direction,sea_surface_temperature&current=wave_height,wave_direction,sea_level_height_msl,sea_surface_temperature,swell_wave_direction,swell_wave_height`)
@@ -56,7 +72,7 @@ const Weather = (props) => {
             console.error(error);
         }
     };
-
+*/
     useEffect(() =>{
 
         if(props.latitude === '' || props.longitude === ''){
@@ -64,7 +80,7 @@ const Weather = (props) => {
         }
 
         fetchForecastData();
-        fetchMarineData();
+        //fetchMarineData();
 
     }, [props.latitude,props.longitude]);
 
