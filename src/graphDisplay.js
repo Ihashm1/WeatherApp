@@ -1,17 +1,18 @@
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 
-export default function LineChart({ labels, values }) {
+export default function LineChart({ labels, values, name}) {
   const ref = useRef();
+  const formattedLabels = labels.map(t => t.split("T")[1]);
 
   useEffect(() => {
     const chart = new Chart(ref.current, {
       type: "line",
       data: {
-        labels: labels,
+        labels: formattedLabels,
         datasets: [
           {
-            label: "Data",
+            label: name,
             data: values,
           }
         ]
