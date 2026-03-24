@@ -17,14 +17,10 @@ const App = () => {
 
     return (
         <div className="container-fluid p-3" style={{backgroundColor:"#cbd2e3",height:"100vh"}} id="app-parent">
-            {/*<h1>Weather Forecast App</h1>*/}
             <Geocoding sendData={setGeoData}/>
             
             {geoData && (
                 <>
-                {/*<h2>Name: {geoData.name}</h2>
-                <p>Latitude: {geoData.latitude}</p>
-                <p>Longitude: {geoData.longitude}</p>*/}
                 
                 <Weather
                     sendData={setWeatherData}

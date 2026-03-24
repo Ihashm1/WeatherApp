@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Weather from './Weather';
-import FutureWeather from './futureWeather';
-import searchIcon from './magnifying-glass-solid.svg';
 
 const Geocoding = (props) => {
     const [location, setLocation] = useState('');
@@ -25,9 +22,7 @@ const Geocoding = (props) => {
 
             setLocationData(response.data.results[0]);
             setLocationsArr(response.data.results);
-            setPlaceholder(response.data.results[0].name + ", " + response.data.results.admin1 + ", " + response.data.results.country)
-            //console.log(response.data);
-            //console.log(response.data.results);
+            setPlaceholder(response.data.results[0].name + ", " + response.data.results.admin1 + ", " + response.data.results.country);
             props.sendData(locationData);
         }
         catch (error) {
@@ -79,7 +74,6 @@ const Geocoding = (props) => {
                     {userLocation && (
                         props.sendData(userLocation)
                     )}
-                    console.log(position.coords)
                 },
                 (error)=>{
                     console.log(error.message)
@@ -101,6 +95,8 @@ const Geocoding = (props) => {
                     <div className="col p-0" 
                         onMouseEnter={handleInputFocus}
                         onMouseLeave={handleInputBlur}
+                        onTouchStart={handleInputFocus}
+                        onTouchCancel={handleInputBlur}
                     >
                         <div className="input-group shadow">
                             {/* Get GPS location */}
@@ -120,13 +116,6 @@ const Geocoding = (props) => {
                             <span className="input-group-text bg-light">🔍</span>
                         </div>
                     </div>
-                    {/*
-                     <div className="col col-auto p-0 m-0">
-                        <button type='submit' className="btn btn-primary">
-                            <img src={searchIcon} className="img-fluid" height="20" width="20"/>
-                        </button>
-                    </div>
-                    */}
                     
                 </div>
                 <div className="row w-100 p-0 m-0 no-gutters">
