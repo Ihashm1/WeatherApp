@@ -1,7 +1,6 @@
 import React from 'react';
 const safety = ["blue", "green", "orange", "red"];
 const ForecastButton = ({safetynum, numval, units, text, click}) => {
-  console.log("button");
   return( 
     <button onClick={click} style={{backgroundColor: safety[safetynum]}}>
       <div>

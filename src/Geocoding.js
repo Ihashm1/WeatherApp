@@ -2,16 +2,20 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Weather from './Weather';
 import FutureWeather from './futureWeather';
+import searchIcon from './magnifying-glass-solid.svg';
 
 const Geocoding = (props) => {
     const [location, setLocation] = useState('');
     const [locationData, setLocationData] = useState(null);
     const [locationsArr, setLocationsArr] = useState(null);
 
+    const [inputFocused, setInputFocused] = useState(false);
+    const [placeholder, setPlaceholder] = useState("Enter Location");
+
     const fetchData = async () => {
         if (!location){return;}
         try{
-            const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=10`)
+            const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=5`)
 
             if (!response || !response.data.results) {
                 return;
@@ -19,6 +23,7 @@ const Geocoding = (props) => {
 
             setLocationData(response.data.results[0]);
             setLocationsArr(response.data.results);
+            setPlaceholder(locationsArr[0].name + ", " + locationsArr[0].admin1 + ", " + locationsArr[0].country)
             //console.log(response.data);
             //console.log(response.data.results);
             props.sendData(locationData);
@@ -46,35 +51,73 @@ const Geocoding = (props) => {
     };
 
     const handleClick = (index) => {
+        setPlaceholder(locationsArr[index].name + ", " + locationsArr[index].admin1 + ", " + locationsArr[index].country)
+        setLocation(locationsArr[index].name + ", " + locationsArr[index].admin1 + ", " + locationsArr[index].country);
         setLocationData(locationsArr[index]);
         props.sendData(locationsArr[index]);
     };
 
+    const handleInputFocus = () => {
+        setInputFocused(true);
+    }
+
+    const handleInputBlur = () => {
+        setInputFocused(false);
+    }
+
     return (
-        <div>
+        <div className="" id="geocoding">
             {
             <form onSubmit={handleSubmit}>
-                <input type='text' placeholder='Enter Location' 
-                value={location} onChange={handleInputChange}>
-                </input>
-                <button type='submit'>Search</button>
+                <div className="row w-100 p-0 m-0 no-gutters">
+                    <div className="col col-10 p-0 m-0" 
+                        onMouseEnter={handleInputFocus}
+                        onMouseLeave={handleInputBlur}
+                    >
+                        <input 
+                            type='text' 
+                            placeholder={placeholder}
+                            value={location} 
+                            onChange={handleInputChange}
+                            className="form-control"
+                            onFocus={handleInputFocus}
+                            >
+                            
+                        </input>
+                            
+                    </div>
+
+                    <div className="col p-0 m-0">
+                        <button type='submit' className="btn btn-primary">
+                            <img src={searchIcon} className="img-fluid" height="20" width="20"/>
+                        </button>
+                    </div>
+                </div>
+                <div className="row w-100 p-0 m-0 no-gutters">
+                    {locationsArr && inputFocused &&(
+                    <>
+                    <div  className="col col-10 p-0 m-0">
+                        <div className="btn-group-vertical w-100" role="group">
+                            {locationsArr.map((locationItem, index) => (
+                                <button 
+                                    onClick={() => handleClick(index)} 
+                                    onMouseEnter={handleInputFocus}
+                                    onMouseLeave={handleInputBlur}
+                                    className="btn btn-light w-100"
+                                    type="button"
+                                    key={index}>
+                                    {locationItem.name + ", " + locationItem.admin1 + ", " + locationItem.country}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    </>
+                    )}
+                </div>
+                
             </form>
             }
-
-            {locationData ? (
-                <>
-                    <h2>Suggestions</h2>
-                    <ul>
-                        {locationsArr.map((locationItem, index) => (
-                            <li key={index}><button onClick={() => handleClick(index)}>
-                                {locationItem.name + ", " + locationItem.admin2 + ", " + locationItem.admin1 + ", " + locationItem.country}</button></li>
-                        ))}
-                    </ul>
-                </>
-                
-            ):(
-                <p>Loading Data...</p>
-            )}
         </div>
     );
 };
