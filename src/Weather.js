@@ -83,7 +83,7 @@ const Weather = (props) => {
         //fetchMarineData();
 
     }, [props.latitude,props.longitude]);
-
+    /*
     return(
         <>
         {forecastArr ? (
@@ -99,7 +99,7 @@ const Weather = (props) => {
             <p>Loading</p>
         )} 
         </>
-    )
+    )*/
 }
 
 export default Weather;

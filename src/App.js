@@ -16,10 +16,11 @@ const App = () => {
     }
 
     return (
-        <div className="container-fluid p-3" style={{backgroundColor:"#cbd2e3"}} id="app-parent">
+        <div className="container-fluid p-3" style={{backgroundColor:"#cbd2e3",height:"100vh"}} id="app-parent">
             {/*<h1>Weather Forecast App</h1>*/}
             <Geocoding sendData={setGeoData}/>
-            {geoData ? (
+            
+            {geoData && (
                 <>
                 {/*<h2>Name: {geoData.name}</h2>
                 <p>Latitude: {geoData.latitude}</p>
@@ -35,14 +36,11 @@ const App = () => {
                         longitude={geoData.longitude}
                     />
                 </>
-            ):(
-                /**/
-                <p>Loading weather</p>
             )}
 
             {weatherData && (
                 <>
-                <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2">
+                <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center">
                     <ForecastButton
                         safetynum={0}
                         numval={weatherData.forecast.current[2][1]}
@@ -72,9 +70,6 @@ const App = () => {
                         click={drawGraph}
                     />
                 </div>
-                
-                
-                <p>{/*weatherData.forecast.current[2][1]*/}</p>
                 </>
             )}
         </div>

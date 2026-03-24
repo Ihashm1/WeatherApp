@@ -69,7 +69,7 @@ const Geocoding = (props) => {
     return (
         <div className="" id="geocoding">
             {
-            <form onSubmit={handleSubmit} className="">
+            <form onSubmit={handleSubmit} className="mb-4">
                 <div className="row p-0 m-0 no-gutters justify-content-center">
                     <div className="col p-0" 
                         onMouseEnter={handleInputFocus}
