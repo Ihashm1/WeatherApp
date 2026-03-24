@@ -1,9 +1,34 @@
-import { fetchWeatherApi } from 'openmeteo';
+import axios from 'axios';
 import { useEffect, useState} from 'react';
 
 const Weather = ({latitude, longitude}) => {
 
-    const [data, setData] = useState('');
+    const [forecastArr, setForecastArr] = useState('');
+
+    const fetchForecastData = async () => {
+        try{
+            const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,apparent_temperature_max,daylight_duration,sunrise,wind_speed_10m_max,wind_direction_10m_dominant&hourly=temperature_2m,visibility,wind_speed_10m,apparent_temperature,precipitation_probability,wind_direction_10m,precipitation,wind_gusts_10m,temperature_80m&current=temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,apparent_temperature&wind_speed_unit=mph`)
+
+            if(!response.data){
+                //console.log(response);
+                return
+            }
+
+            const farray = {
+                current: Object.entries(response.data.current),
+                current_units: Object.entries(response.data.current_units),
+                daily: Object.entries(response.data.daily),
+                daily_units: Object.entries(response.data.daily_units),
+                hourly: Object.entries(response.data.hourly),
+                hourly_units: Object.entries(response.data.hourly_units)
+            }
+            //console.log(farray);
+            setForecastArr(farray);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() =>{
 
@@ -11,32 +36,16 @@ const Weather = ({latitude, longitude}) => {
             return
         }
 
-        const params = {
-            latitude: [latitude],
-            longitude: [longitude],
-            current: 'temperature_2m,weather_code,wind_speed_10m,wind_direction_10m',
-            hourly: 'temperature_2m,precipitation',
-            daily: 'weather_code,temperature_2m_max,temperature_2m_min'
-            };
-        const url = 'https://api.open-meteo.com/v1/forecast';
-        (async () => {
-            const responses = await fetchWeatherApi(url, params);
-            if(!responses[0]){
-                return
-            }
-            const current = responses[0].current();
-            console.log("Current Temperataure:", current.variables(0).value(), "°C");
-            setData(responses[0])
-        })();
+        fetchForecastData();
 
     }, [latitude,longitude]);
 
     return(
         <>
-        {data ? (
+        {forecastArr ? (
             <>
             <div>
-                <p>Current Temp: {data.current().variables(0).value()}</p>
+                <p>Current Data: {forecastArr.current[0]}</p>
             </div>
             </>
         ) : (
