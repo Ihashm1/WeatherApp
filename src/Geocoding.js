@@ -65,20 +65,6 @@ const Geocoding = (props) => {
                                 {locationItem.name + ", " + locationItem.admin2 + ", " + locationItem.admin1 + ", " + locationItem.country}</button></li>
                         ))}
                     </ul>
-                    {/*
-                    <h2>Name: {locationData.name}</h2>
-                    <p>Latitude: {locationData.latitude}</p>
-                    <p>Longitude: {locationData.longitude}</p>
-                    <Weather
-                        latitude={locationData.latitude}
-                        longitude={locationData.longitude}
-                    />
-                    
-                    <FutureWeather
-                        latitude={locationData.latitude}
-                        longitude={locationData.longitude}
-                    />
-                    */}
                 </>
                 
             ):(
