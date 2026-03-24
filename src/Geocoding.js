@@ -9,8 +9,13 @@ const Geocoding = (props) => {
     const [locationsArr, setLocationsArr] = useState(null);
 
     const fetchData = async () => {
+        if (!location){return;}
         try{
             const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=10`)
+
+            if (!response || !response.data.results) {
+                return;
+            }
 
             setLocationData(response.data.results[0]);
             setLocationsArr(response.data.results);

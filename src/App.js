@@ -35,7 +35,7 @@ const App = () => {
 
             {weatherData?(
                 <>
-                <p>{Object.entries(weatherData.forecast.current)}</p>
+                <p>{(weatherData.forecast.current)}</p>
                 </>
             ):(
                 <p>Weatherdata array:</p>
