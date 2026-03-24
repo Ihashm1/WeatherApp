@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Weather from './Weather';
+import FutureWeather from './futureWeather';
 
 const Geocoding = () => {
     const [location, setLocation] = useState('');
@@ -65,6 +66,10 @@ const Geocoding = () => {
                     <p>Latitude: {locationData.latitude}</p>
                     <p>Longitude: {locationData.longitude}</p>
                     <Weather
+                        latitude={locationData.latitude}
+                        longitude={locationData.longitude}
+                    />
+                    <FutureWeather
                         latitude={locationData.latitude}
                         longitude={locationData.longitude}
                     />
