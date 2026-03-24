@@ -1,16 +1,17 @@
 import React from 'react';
-const safety = ["blue", "green", "orange", "red"];
+const safety = ["#DDFDFF", "#E6FFDD", "#FFF8DD", "#FFE5DD"];
 const ForecastButton = ({safetynum, numval, units, text, click}) => {
   return( 
-    <button onClick={click} style={{backgroundColor: safety[safetynum]}}>
-      <div>
-        <div>
-          {numval}{units}
+    <button 
+      onClick={click} 
+      style={{backgroundColor: safety[safetynum],height:"150px",width:"150px"}}
+      className="btn" 
+      type="button"
+      >
+        <div className="row w-100 h-100 text-center align-items-center mx-auto">
+            <h1 className="col mx-auto fw-semibold">{numval}{units}</h1>
+            <h5 className="col mx-auto">{text}</h5>
         </div>
-        <div>
-          {text}
-        </div>
-      </div>
     </button>
   );
 };

@@ -88,10 +88,12 @@ const Weather = (props) => {
         <>
         {forecastArr ? (
             <>
+            
             <div>
                 <p>Current Data: {forecastArr.current}</p>
                 <p>Marine Data: {marineArr.current}</p>
-            </div>
+            </div> 
+            
             </>
         ) : (
             <p>Loading</p>

@@ -23,7 +23,7 @@ const Geocoding = (props) => {
 
             setLocationData(response.data.results[0]);
             setLocationsArr(response.data.results);
-            setPlaceholder(locationsArr[0].name + ", " + locationsArr[0].admin1 + ", " + locationsArr[0].country)
+            setPlaceholder(response.data.results[0].name + ", " + response.data.results.admin1 + ", " + response.data.results.country)
             //console.log(response.data);
             //console.log(response.data.results);
             props.sendData(locationData);
@@ -63,6 +63,7 @@ const Geocoding = (props) => {
 
     const handleInputBlur = () => {
         setInputFocused(false);
+        setLocation("");
     }
 
     return (

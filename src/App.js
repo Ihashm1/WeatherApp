@@ -21,9 +21,10 @@ const App = () => {
             <Geocoding sendData={setGeoData}/>
             {geoData ? (
                 <>
-                <h2>Name: {geoData.name}</h2>
-                    <p>Latitude: {geoData.latitude}</p>
-                    <p>Longitude: {geoData.longitude}</p>
+                {/*<h2>Name: {geoData.name}</h2>
+                <p>Latitude: {geoData.latitude}</p>
+                <p>Longitude: {geoData.longitude}</p>*/}
+                
                 <Weather
                     sendData={setWeatherData}
                     latitude={geoData.latitude}
@@ -35,22 +36,46 @@ const App = () => {
                     />
                 </>
             ):(
+                /**/
                 <p>Loading weather</p>
             )}
 
-            {weatherData?(
+            {weatherData && (
                 <>
-                <ForecastButton
-                    safetynum={0}
-                    numval={weatherData.forecast.current[2][1]}
-                    units={"C"}
-                    text={"Temperature"}
-                    click={drawGraph}
-                />
+                <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2">
+                    <ForecastButton
+                        safetynum={0}
+                        numval={weatherData.forecast.current[2][1]}
+                        units={"C"}
+                        text={"Temperature"}
+                        click={drawGraph}
+                    />
+                    <ForecastButton
+                        safetynum={1}
+                        numval={weatherData.forecast.current[2][1]}
+                        units={"C"}
+                        text={"Temperature"}
+                        click={drawGraph}
+                    />
+                    <ForecastButton
+                        safetynum={2}
+                        numval={weatherData.forecast.current[2][1]}
+                        units={"C"}
+                        text={"Temperature"}
+                        click={drawGraph}
+                    />
+                    <ForecastButton
+                        safetynum={3}
+                        numval={weatherData.forecast.current[2][1]}
+                        units={"C"}
+                        text={"Temperature"}
+                        click={drawGraph}
+                    />
+                </div>
+                
+                
                 <p>{/*weatherData.forecast.current[2][1]*/}</p>
                 </>
-            ):(
-                <p>Weatherdata array:</p>
             )}
         </div>
     );
