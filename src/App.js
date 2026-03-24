@@ -40,8 +40,6 @@ const App = () => {
             ):(
                 <p>Weatherdata array:</p>
             )}
-            
-            <FutureWeather />
         </div>
     );
 };
