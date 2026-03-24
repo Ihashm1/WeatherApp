@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Weather from './Weather';
+import FutureWeather from './futureWeather';
 
 const Geocoding = () => {
     const [location, setLocation] = useState('');
@@ -37,6 +38,10 @@ const Geocoding = () => {
         fetchData();
     };
 
+    const handleClick = (index) => {
+        setLocationData(locationsArr[index]);
+    };
+
     return (
         <div>
             {
@@ -53,9 +58,7 @@ const Geocoding = () => {
                     <h2>Suggestions</h2>
                     <ul>
                         {locationsArr.map((locationItem, index) => (
-                            <li key={index}><button onClick={function handleClick(){
-                                setLocationData(locationsArr[index]);
-                            }}>
+                            <li key={index}><button onClick={() => handleClick(index)}>
                                 {locationItem.name + ", " + locationItem.admin2 + ", " + locationItem.admin1 + ", " + locationItem.country}</button></li>
                         ))}
                     </ul>
@@ -63,6 +66,10 @@ const Geocoding = () => {
                     <p>Latitude: {locationData.latitude}</p>
                     <p>Longitude: {locationData.longitude}</p>
                     <Weather
+                        latitude={locationData.latitude}
+                        longitude={locationData.longitude}
+                    />
+                    <FutureWeather
                         latitude={locationData.latitude}
                         longitude={locationData.longitude}
                     />
