@@ -16,7 +16,7 @@ const App = () => {
     }
 
     return (
-        <div className="container bg-secondary p-3" id="app-parent">
+        <div className="container-fluid p-3" style={{backgroundColor:"#cbd2e3"}} id="app-parent">
             {/*<h1>Weather Forecast App</h1>*/}
             <Geocoding sendData={setGeoData}/>
             {geoData ? (

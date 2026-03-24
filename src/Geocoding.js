@@ -69,35 +69,42 @@ const Geocoding = (props) => {
     return (
         <div className="" id="geocoding">
             {
-            <form onSubmit={handleSubmit}>
-                <div className="row w-100 p-0 m-0 no-gutters">
-                    <div className="col col-10 p-0 m-0" 
+            <form onSubmit={handleSubmit} className="">
+                <div className="row p-0 m-0 no-gutters justify-content-center">
+                    <div className="col p-0" 
                         onMouseEnter={handleInputFocus}
                         onMouseLeave={handleInputBlur}
                     >
-                        <input 
-                            type='text' 
-                            placeholder={placeholder}
-                            value={location} 
-                            onChange={handleInputChange}
-                            className="form-control"
-                            onFocus={handleInputFocus}
-                            >
-                            
-                        </input>
-                            
+                        <div className="input-group shadow">
+                            {/* Get GPS location */}
+                            <button 
+                                type="button"
+                                className="btn btn-light border border-light-emphasis"
+                            >📍</button>
+                            <input 
+                                type='text' 
+                                placeholder={placeholder}
+                                value={location} 
+                                onChange={handleInputChange}
+                                className="form-control bg-light"
+                                onFocus={handleInputFocus}>
+                            </input>
+                            <span class="input-group-text bg-light">🔍</span>
+                        </div>
                     </div>
-
-                    <div className="col p-0 m-0">
+                    {/*
+                     <div className="col col-auto p-0 m-0">
                         <button type='submit' className="btn btn-primary">
                             <img src={searchIcon} className="img-fluid" height="20" width="20"/>
                         </button>
                     </div>
+                    */}
+                    
                 </div>
                 <div className="row w-100 p-0 m-0 no-gutters">
                     {locationsArr && inputFocused &&(
                     <>
-                    <div  className="col col-10 p-0 m-0">
+                    <div  className="col p-0 m-0">
                         <div className="btn-group-vertical w-100" role="group">
                             {locationsArr.map((locationItem, index) => (
                                 <button 
