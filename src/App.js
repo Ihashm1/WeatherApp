@@ -12,14 +12,24 @@ const App = () => {
     return (
         <div>
             <h1>Weather Forecast App</h1>
-            {geoData?(
+            <Geocoding sendData={setGeoData}/>
+            {geoData ? (
                 <>
-                <p>Geo Lat:{geoData.latitude} Long: {geoData.longitude}</p>
+                <h2>Name: {geoData.name}</h2>
+                    <p>Latitude: {geoData.latitude}</p>
+                    <p>Longitude: {geoData.longitude}</p>
+                <Weather
+                    latitude={geoData.latitude}
+                    longitude={geoData.longitude}
+                />
+                <FutureWeather
+                        latitude={geoData.latitude}
+                        longitude={geoData.longitude}
+                    />
                 </>
             ):(
-                <p>Loading</p>
+                <p>Loading weather</p>
             )}
-            <Geocoding sendData={setGeoData}/>
             
             <FutureWeather />
         </div>
