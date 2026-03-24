@@ -3,7 +3,7 @@ import axios from 'axios';
 import Weather from './Weather';
 import FutureWeather from './futureWeather';
 
-const Geocoding = () => {
+const Geocoding = (props) => {
     const [location, setLocation] = useState('');
     const [locationData, setLocationData] = useState(null);
     const [locationsArr, setLocationsArr] = useState(null);
@@ -11,10 +11,12 @@ const Geocoding = () => {
     const fetchData = async () => {
         try{
             const response = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${location}&count=10`)
+
             setLocationData(response.data.results[0]);
             setLocationsArr(response.data.results);
             //console.log(response.data);
             //console.log(response.data.results);
+            props.sendData(locationData);
         }
         catch (error) {
             console.error(error);
@@ -40,6 +42,7 @@ const Geocoding = () => {
 
     const handleClick = (index) => {
         setLocationData(locationsArr[index]);
+        props.sendData(locationsArr[index]);
     };
 
     return (
