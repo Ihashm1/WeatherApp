@@ -8,6 +8,7 @@ import FutureWeather from './futureWeather';
 const App = () => {
 
     const [geoData, setGeoData] = useState('');
+    const [weatherData, setWeatherData] = useState('');
 
     return (
         <div>
@@ -19,6 +20,7 @@ const App = () => {
                     <p>Latitude: {geoData.latitude}</p>
                     <p>Longitude: {geoData.longitude}</p>
                 <Weather
+                    sendData={setWeatherData}
                     latitude={geoData.latitude}
                     longitude={geoData.longitude}
                 />
@@ -29,6 +31,14 @@ const App = () => {
                 </>
             ):(
                 <p>Loading weather</p>
+            )}
+
+            {weatherData?(
+                <>
+                <p>{weatherData.forecast.current[2][1]}</p>
+                </>
+            ):(
+                <p>Weatherdata array:</p>
             )}
             
             <FutureWeather />
