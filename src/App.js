@@ -16,6 +16,37 @@ const App = () => {
         console.log("clicked");
     }
 
+    const weatherLookup = {
+    0:  { label: "Clear Sky",  icon: "☀️"  },
+    1: {label: "Mainly clear", icon: "☁️" },
+    2: {label: "Partly cloudy", icon: "☁️" },
+    3: {label: "Overcast", icon: "☁️" },
+    45: { label: "Fog and depositing rime fog", icon: "🌫️" }, 
+    48:	{ label: "Fog and depositing rime fog", icon: "🌫️" },
+    51:	{ label: "Drizzle: Light, moderate, and dense intensity", icon: "🌧️" },
+    53:	{ label: "Drizzle: Light, moderate, and dense intensity", icon: "🌧️" },
+    55:	{ label: "Drizzle: Light, moderate, and dense intensity", icon: "🌧️" },
+    56:	{ label: "Freezing Drizzle: Light and dense intensity", icon: "🌧️" },
+    57:	{ label: "Freezing Drizzle: Light and dense intensity", icon: "🌧️" },
+    61:	{ label: "Rain: Slight, moderate and heavy intensity", icon: "🌧️" },
+    63:	{ label: "Rain: Slight, moderate and heavy intensity", icon: "🌧️" },
+    65:	{ label: "Rain: Slight, moderate and heavy intensity", icon: "🌧️" },
+    66:	{ label: "Freezing Rain: Light and heavy intensity", icon: "🌧️" },
+    67:	{ label: "Freezing Rain: Light and heavy intensity", icon: "🌧️" },
+    71:	{ label: "Snow fall: Slight, moderate, and heavy intensity", icon: "🌨️" },
+    73:	{ label: "Snow fall: Slight, moderate, and heavy intensity", icon: "🌨️" },
+    75:	{ label: "Snow fall: Slight, moderate, and heavy intensity", icon: "🌨️" },
+    77:	{ label: "Snow grains", icon: "snow-grains" },
+    80: { label: "Rain showers: Slight, moderate, and violent", icon: "🌧️" },
+    81: { label: "Rain showers: Slight, moderate, and violent", icon: "🌧️" },
+    82:	{ label: "Rain showers: Slight, moderate, and violent", icon: "🌧️" },
+    85: { label: "Snow showers slight and heavy", icon: "🌨️" },
+    86:	{ label: "Snow showers slight and heavy", icon: "🌨️" },
+    95:	{ label: "Thunderstorm: Slight or moderate", icon: "⛈️" },
+    96:	{ label: "Thunderstorm with slight and heavy hail", icon: "⛈️" },
+    99:	{ label: "Thunderstorm with slight and heavy hail", icon: "⛈️" }
+}
+
     return (
         <>
         <div style={{backgroundColor:"#cbd2e3",minHeight:"100vh"}} id="Forecast" className={divDisp ? "container-fluid p-3" : "container-fluid p-3 hidden"}>
@@ -40,7 +71,7 @@ const App = () => {
                 <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center p-1">
                     <ForecastButton
                         safetynum={0}
-                        numval={weatherData ? weatherData.forecast.current[2][1] : "N/A"}
+                        numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
                         units={"°C"}
                         text={"Feels like:" + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
                         click={switchVisibility}

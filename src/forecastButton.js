@@ -5,10 +5,10 @@ const ForecastButton = ({safetynum, numval, units, text, click}) => {
     <button 
       onClick={click} 
       style={{backgroundColor: safety[safetynum],height:"40vw",width:"40vw", maxWidth:"180px", maxHeight:"180px"}}
-      className="btn shadow-sm rounded-5" 
+      className="btn shadow-sm rounded-5 p-0" 
       type="button"
       >
-        <div className="row w-100 h-100 text-center align-items-center mx-auto">
+        <div className="row w-100 h-100 text-center align-items-center mx-auto p-0">
             <h1 className="col mx-auto fw-semibold">{numval}{units}</h1>
             <h5 className="col mx-auto">{text}</h5>
         </div>
