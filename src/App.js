@@ -7,7 +7,7 @@ import ForecastButton from './forecastButton';
 import LineChart from './graphDisplay';
 
 const App = () => {
-    const [divDisp, setDivDisp] = useState(false);
+    const [divDisp, setDivDisp] = useState(true);
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
 
@@ -17,7 +17,7 @@ const App = () => {
     }
 
     return (
-        <div style={{backgroundColor:"#cbd2e3",height:"100vh"}} id="Forecast" className={divDisp ? "container-fluid p-3" : "hidden container-fluid p-3"}>
+        <div style={{backgroundColor:"#cbd2e3",height:"100vh"}} id="Forecast" className={divDisp ? "container-fluid p-3" : "container-fluid p-3 hidden"}>
             <Geocoding sendData={setGeoData}/>
             
             {geoData && (
