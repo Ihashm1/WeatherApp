@@ -7,16 +7,17 @@ import ForecastButton from './forecastButton';
 import LineChart from './graphDisplay';
 
 const App = () => {
-
+    const [divDisp, setDivDisp] = useState(false);
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
 
-    const drawGraph = () =>{
-        console.log("drawing");
+    const switchVisibility = () =>{
+        setDivDisp(!divDisp);
+        console.log("clicked");
     }
 
     return (
-        <div className="container-fluid p-3" style={{backgroundColor:"#cbd2e3",height:"100vh"}} id="app-parent">
+        <div style={{backgroundColor:"#cbd2e3",height:"100vh"}} id="Forecast" className={divDisp ? "container-fluid p-3" : "hidden container-fluid p-3"}>
             <Geocoding sendData={setGeoData}/>
             
             {geoData && (
@@ -42,32 +43,26 @@ const App = () => {
                         numval={weatherData.forecast.current[2][1]}
                         units={"C"}
                         text={"Temperature"}
-                        click={drawGraph}
-                    />
-                    <ForecastButton
-                        safetynum={1}
-                        numval={weatherData.forecast.current[2][1]}
-                        units={"C"}
-                        text={"Temperature"}
-                        click={drawGraph}
-                    />
-                    <ForecastButton
-                        safetynum={2}
-                        numval={weatherData.forecast.current[2][1]}
-                        units={"C"}
-                        text={"Temperature"}
-                        click={drawGraph}
-                    />
-                    <ForecastButton
-                        safetynum={3}
-                        numval={weatherData.forecast.current[2][1]}
-                        units={"C"}
-                        text={"Temperature"}
-                        click={drawGraph}
+                        click={switchVisibility}
                     />
                 </div>
                 </>
-            )}
+               )}
+           
+            <div id="LineChart" className={divDisp ? "hidden" : ""}>
+                {weatherData &&(
+                    <>
+                    <ForecastButton
+                        safetynum={0}
+                        numval={weatherData.forecast.current[2][1]}
+                        units={"C"}
+                        text={"Temperature"}
+                        click={switchVisibility}
+                    />
+                    <p>{/*weatherData.forecast.current[2][1]*/}</p>
+                    </>
+                )}
+            </div>
         </div>
     );
 };
