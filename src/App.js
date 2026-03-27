@@ -10,16 +10,12 @@ import calendarLogo from './images/calendar-regular.svg';
 import mapLogo from './images/map-regular.svg';
 import warningLogo from './images/triangle-exclamation-solid.svg';
 import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
+import ForecastModal from './forecastModal';
 
 const App = () => {
-    const [divDisp, setDivDisp] = useState(true);
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
-
-    const switchVisibility = () =>{
-        setDivDisp(!divDisp);
-        console.log("clicked");
-    }
+    const [modalClick, setModalClick] = useState(null);
 
     const weatherLookup = {
     0:  { label: "Clear Sky",  icon: "☀️"  },
@@ -141,10 +137,6 @@ const App = () => {
                         latitude={geoData.latitude}
                         longitude={geoData.longitude}
                     />
-                    <FutureWeather
-                        latitude={geoData.latitude}
-                        longitude={geoData.longitude}
-                    />
                     </>
                 )}
             </div>
@@ -156,7 +148,7 @@ const App = () => {
                     </div>
                 </div>
                 <div className='tab-pane show active' id="forecasts">
-                    <div className={divDisp ? "container-fluid p-3" : "container-fluid p-3 hidden"}>
+                    <div className={"container-fluid p-3"}>
                         {!geoData &&
                             <>
                             <div className='alert alert-info alert-dismissable show'>
@@ -184,14 +176,14 @@ const App = () => {
                                     numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
                                     units={"°C"}
                                     text={"Feels like: " + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
-                                    click={switchVisibility}
+                                    onClick={() =>setModalClick("Temperature")}
                                 />
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.forecast.current[3][1] : "N/A"}
                                     units={"mm"}
                                     text={"Precipitation"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Precipitation")}
                                 />
 
                                 <ForecastButton
@@ -199,7 +191,7 @@ const App = () => {
                                     numval={weatherData ? weatherData.forecast.current[4][1] : "N/A"}
                                     units={"mph"}
                                     text={"Wind Speed"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Wind Speed")}
                                 />
                                 <ForecastButton
                                     safetynum={0}
@@ -207,14 +199,14 @@ const App = () => {
                                     numval={weatherData ? weatherData.forecast.current[5][1] : "N/A"}
                                     units={"°"}
                                     text={"Wind Direction"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Wind Direction")}
                                 />
                                 <ForecastButton
                                     safetynum={safetyLookup("windGust", parseFloat(weatherData ? weatherData.forecast.current[6][1] : 0))}
                                     numval={weatherData ? weatherData.forecast.current[6][1] : "N/A"}
                                     units={"mph"}
                                     text={"Wind Gusts"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Wind Gusts")}
                                 />
                                 </>
                                 }
@@ -225,48 +217,69 @@ const App = () => {
                                     numval={weatherData ? weatherData.marine.current[2][1] : "N/A"}
                                     units={"m"}
                                     text={"Wave Height"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Wave Height")}
                                 />
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.marine.current[3][1] : "N/A"}
                                     units={"°"}
                                     text={"Wave Direction"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Wave Direction")}
                                 />
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.marine.current[4][1] : "N/A"}
                                     units={"m"}
                                     text={"Sea Level Height"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Sea Level Height")}
                                 />
                                 <ForecastButton
                                     safetynum={safetyLookup("seaTemp", parseFloat(weatherData ? weatherData.marine.current[5][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[5][1] : "N/A"}
                                     units={"°C"}
                                     text={"Sea Surface Temperature"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Sea Surface Temperature")}
                                 />
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.marine.current[6][1] : "N/A"}
                                     units={"°"}
                                     text={"Swell Direction"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Swell Direction")}
                                 />
                                 <ForecastButton
                                     safetynum={safetyLookup("swellHeight", parseFloat(weatherData ? weatherData.marine.current[7][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[7][1] : "N/A"}
                                     units={"m"}
                                     text={"Swell Height"}
-                                    click={switchVisibility}
+                                    click={() =>setModalClick("Swell Height")}
                                 />
                                 </>}
                             </div>
+                            <div className='modal' id="fModal">
+                                <div className="modal-dialog modal-lg modal-fullscreen-md-down">
+                                    <div className='modal-content'>
+                                        <div className='modal-header'>
+                                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                             
+                                                {modalClick && (
+                                                    <>
+                                                    <h2>{modalClick}</h2>
+                                                    </>
+                                                )
+                                                }
+                                        </div>
+                                        <div className='modal-body'>
+                                            {weatherData && geoData && 
+                                                <ForecastModal wData={weatherData} gData={geoData}/>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </>
                     
-                        <div id="LineChart" className={divDisp ? "hidden" : ""}>
+                        <div id="LineChart" className={"hidden"}>
                             {weatherData &&(
                                 <>
                                 <ForecastButton
@@ -274,7 +287,7 @@ const App = () => {
                                     numval={weatherData.forecast.current[2][1]}
                                     units={"C"}
                                     text={"Temperature"}
-                                    click={switchVisibility}
+                                    ////click={}
                                 />
                                 </>
                             )}

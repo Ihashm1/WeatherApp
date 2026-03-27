@@ -15,6 +15,8 @@ const ForecastButton = ({safetynum, numval, units, text, click}) => {
               backgroundColor: (safety[safetynum])}}
       className="btn shadow-sm rounded-5 p-0" 
       type="button"
+      data-bs-toggle="modal" 
+      data-bs-target="#fModal"
       >
         <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1">
             <h1 className="col mx-auto fw-semibold">{numval}{units}</h1>
