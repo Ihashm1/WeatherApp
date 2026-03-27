@@ -9,6 +9,7 @@ import settingsLogo from './images/gear-solid.svg';
 import calendarLogo from './images/calendar-regular.svg';
 import mapLogo from './images/map-regular.svg';
 import warningLogo from './images/triangle-exclamation-solid.svg';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 
 const App = () => {
     const [divDisp, setDivDisp] = useState(true);
@@ -178,8 +179,18 @@ const App = () => {
                     </div>
                 </div>
                 <div className="tab-pane" id="map">
-                    <div className="">
+                    <div className="container-fluid p-3">
                         <p>Map</p>
+                        <div className='h-100 w-100' style={{}}>
+                        <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{height:"80vh"}}>
+                            <TileLayer
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                        </MapContainer>
+                        </div>
+                        
+                        <p>Endmap</p>
                     </div>
                 </div>
             </div>
