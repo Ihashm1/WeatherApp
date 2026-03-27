@@ -58,7 +58,7 @@ const FutureWeather = ({ latitude, longitude }) => {
     const currentWeather = weatherLookup[currentData?.weather_code];
    
 
-    /*
+    
     return (
         <div>
             {dailyArr ? (
@@ -86,7 +86,7 @@ const FutureWeather = ({ latitude, longitude }) => {
         </div>  
 
     );
-    */
+    
 };
 
 export default FutureWeather;

@@ -79,7 +79,7 @@ const Geocoding = (props) => {
                     console.log(error.message)
                 },
                 {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy: false,
                     timeout: 5000,
                     maximumAge: 0,    
                 }
@@ -90,7 +90,7 @@ const Geocoding = (props) => {
     return (
         <div className="" id="geocoding">
             {
-            <form onSubmit={handleSubmit} className="mb-4">
+            <form onSubmit={handleSubmit} className="mb-2">
                 <div className="row p-0 m-0 no-gutters justify-content-center">
                     <div className="col p-0" 
                         onMouseEnter={handleInputFocus}
@@ -98,11 +98,11 @@ const Geocoding = (props) => {
                         onTouchStart={handleInputFocus}
                         onTouchCancel={handleInputBlur}
                     >
-                        <div className="input-group shadow">
+                        <div className="input-group rounded-pill shadow">
                             {/* Get GPS location */}
                             <button 
                                 type="button"
-                                className="btn btn-light border border-light-emphasis"
+                                className="btn btn-light border border-light-emphasis rounded-start-pill"
                                 onClick={getUserLocation}
                             >📍</button>
                             <input 
@@ -113,7 +113,7 @@ const Geocoding = (props) => {
                                 className="form-control bg-light"
                                 onFocus={handleInputFocus}>
                             </input>
-                            <span className="input-group-text bg-light">🔍</span>
+                            <span className="input-group-text bg-light rounded-end-pill">🔍</span>
                         </div>
                     </div>
                     
