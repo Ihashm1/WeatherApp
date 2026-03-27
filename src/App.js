@@ -292,7 +292,6 @@ const App = () => {
                                 <UpdateMap center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [50,0]} />
                             </MapContainer>
                         </div>
-                        <p>Endmap</p>
                     </div>
                 </div>
             </div>

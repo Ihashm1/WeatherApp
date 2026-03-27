@@ -79,7 +79,7 @@ const Geocoding = (props) => {
                     console.log(error.message)
                 },
                 {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy: false,
                     timeout: 5000,
                     maximumAge: 0,    
                 }
