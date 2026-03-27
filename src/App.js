@@ -55,12 +55,32 @@ const App = () => {
     function UpdateMap(props) {
         const map = useMap();
         map.flyTo(props.center);
-        return null;
+        return(
+            <Marker position={props.center}>
+            </Marker>
+        );
     }
 
     return (
         <>
         <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh",backgroundColor:"#cbd2e3"}}>
+            <div className="p-3 pb-1">
+                <Geocoding sendData={setGeoData}/>
+                    {geoData && (
+                    <>
+                    <Weather
+                        sendData={setWeatherData}
+                        latitude={geoData.latitude}
+                        longitude={geoData.longitude}
+                    />
+                    <FutureWeather
+                        latitude={geoData.latitude}
+                        longitude={geoData.longitude}
+                    />
+                    </>
+                )}
+            </div>
+            
             <div className='tab-content' id="app-tabcontent">
                 <div className="tab-pane" id="settings">
                     <div className="">
@@ -69,22 +89,6 @@ const App = () => {
                 </div>
                 <div className='tab-pane show active' id="forecasts">
                     <div className={divDisp ? "container-fluid p-3" : "container-fluid p-3 hidden"}>
-                        <Geocoding sendData={setGeoData}/>
-                        {geoData && (
-                            <>
-                            
-                            <Weather
-                                sendData={setWeatherData}
-                                latitude={geoData.latitude}
-                                longitude={geoData.longitude}
-                            />
-                            <FutureWeather
-                                    latitude={geoData.latitude}
-                                    longitude={geoData.longitude}
-                                />
-                            </>
-                        )}
-
                         <>
                             <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center p-1">
                                 <ForecastButton
@@ -186,17 +190,13 @@ const App = () => {
                 </div>
                 <div className="tab-pane" id="map">
                     <div className="container-fluid p-3">
-                        <p>Map</p>
                         <div className='h-100 w-100' style={{}}>
-                            <MapContainer center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [0,0]} zoom={12} scrollWheelZoom={true} style={{height:"80vh"}}>
+                            <MapContainer center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [50,0]} zoom={10} scrollWheelZoom={true} style={{height:"80vh"}}>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
-                                <Marker position={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [0,0]}>
-                                    <Popup>{geoData ? geoData.name : "No location"}</Popup>
-                                </Marker>
-                                <UpdateMap center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [0,0]} />
+                                <UpdateMap center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [50,0]} />
                             </MapContainer>
                         </div>
                         <p>Endmap</p>
