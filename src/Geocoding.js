@@ -98,11 +98,11 @@ const Geocoding = (props) => {
                         onTouchStart={handleInputFocus}
                         onTouchCancel={handleInputBlur}
                     >
-                        <div className="input-group shadow">
+                        <div className="input-group rounded-pill shadow">
                             {/* Get GPS location */}
                             <button 
                                 type="button"
-                                className="btn btn-light border border-light-emphasis"
+                                className="btn btn-light border border-light-emphasis rounded-start-pill"
                                 onClick={getUserLocation}
                             >📍</button>
                             <input 
@@ -113,7 +113,7 @@ const Geocoding = (props) => {
                                 className="form-control bg-light"
                                 onFocus={handleInputFocus}>
                             </input>
-                            <span className="input-group-text bg-light">🔍</span>
+                            <span className="input-group-text bg-light rounded-end-pill">🔍</span>
                         </div>
                     </div>
                     
