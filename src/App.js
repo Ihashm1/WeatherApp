@@ -81,7 +81,7 @@ const App = () => {
                 )}
             </div>
             
-            <div className='tab-content' id="app-tabcontent">
+            <div className='tab-content pb-4' id="app-tabcontent">
                 <div className="tab-pane" id="settings">
                     <div className="">
                         <p>Settings</p>
@@ -89,6 +89,15 @@ const App = () => {
                 </div>
                 <div className='tab-pane show active' id="forecasts">
                     <div className={divDisp ? "container-fluid p-3" : "container-fluid p-3 hidden"}>
+                        {weatherData && !weatherData.marine.current[2][1] &&
+                        <>
+                        <div className="alert alert-warning alert-dismissable show">
+                            <img src={warningLogo} class="bi me-2" width="15"/>
+                            <span>Marine weather conditions not detected at this location.</span>
+                            <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+                        </div>
+                        </>
+                        }
                         <>
                             <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center p-1">
                                 <ForecastButton
@@ -127,6 +136,8 @@ const App = () => {
                                     text={"Wind Gusts"}
                                     click={switchVisibility}
                                 />
+                                {weatherData && weatherData.marine.current[2][1] &&
+                                <>
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.marine.current[2][1] : "N/A"}
@@ -169,6 +180,7 @@ const App = () => {
                                     text={"Swell Height"}
                                     click={switchVisibility}
                                 />
+                                </>}
                             </div>
                         </>
                     
@@ -182,7 +194,6 @@ const App = () => {
                                     text={"Temperature"}
                                     click={switchVisibility}
                                 />
-                                <p>{/*weatherData.forecast.current[2][1]*/}</p>
                                 </>
                             )}
                         </div>
