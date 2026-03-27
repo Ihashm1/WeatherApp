@@ -157,6 +157,15 @@ const App = () => {
                 </div>
                 <div className='tab-pane show active' id="forecasts">
                     <div className={divDisp ? "container-fluid p-3" : "container-fluid p-3 hidden"}>
+                        {!geoData &&
+                            <>
+                            <div className='alert alert-info alert-dismissable show'>
+                                <img src={warningLogo} className="bi me-2" width="15"/>
+                                <span>No location selected! Enter a location in the search bar or use GPS to fetch weather data.</span>
+                                <button type="button" className="btn-close float-end" data-bs-dismiss="alert"></button>
+                            </div>
+                            </>
+                        }
                         {weatherData && !weatherData.marine.current[2][1] &&
                         <>
                         <div className="alert alert-warning alert-dismissable show">
@@ -168,11 +177,13 @@ const App = () => {
                         }
                         <>
                             <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center p-1">
+                                {weatherData &&
+                                <>
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
                                     units={"°C"}
-                                    text={"Feels like:" + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
+                                    text={"Feels like: " + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
                                     click={switchVisibility}
                                 />
                                 <ForecastButton
@@ -205,6 +216,8 @@ const App = () => {
                                     text={"Wind Gusts"}
                                     click={switchVisibility}
                                 />
+                                </>
+                                }
                                 {weatherData && weatherData.marine.current[2][1] &&
                                 <>
                                 <ForecastButton
