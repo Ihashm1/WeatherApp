@@ -9,7 +9,7 @@ import settingsLogo from './images/gear-solid.svg';
 import calendarLogo from './images/calendar-regular.svg';
 import mapLogo from './images/map-regular.svg';
 import warningLogo from './images/triangle-exclamation-solid.svg';
-import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents } from 'react-leaflet'
 
 const App = () => {
     const [divDisp, setDivDisp] = useState(true);
@@ -50,7 +50,13 @@ const App = () => {
     95:	{ label: "Thunderstorm: Slight or moderate", icon: "⛈️" },
     96:	{ label: "Thunderstorm with slight and heavy hail", icon: "⛈️" },
     99:	{ label: "Thunderstorm with slight and heavy hail", icon: "⛈️" }
-}
+    }
+
+    function UpdateMap(props) {
+        const map = useMap();
+        map.flyTo(props.center);
+        return null;
+    }
 
     return (
         <>
@@ -182,14 +188,17 @@ const App = () => {
                     <div className="container-fluid p-3">
                         <p>Map</p>
                         <div className='h-100 w-100' style={{}}>
-                        <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{height:"80vh"}}>
-                            <TileLayer
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            />
-                        </MapContainer>
+                            <MapContainer center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [0,0]} zoom={12} scrollWheelZoom={true} style={{height:"80vh"}}>
+                                <TileLayer
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
+                                <Marker position={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [0,0]}>
+                                    <Popup>{geoData ? geoData.name : "No location"}</Popup>
+                                </Marker>
+                                <UpdateMap center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [0,0]} />
+                            </MapContainer>
                         </div>
-                        
                         <p>Endmap</p>
                     </div>
                 </div>
