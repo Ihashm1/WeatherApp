@@ -9,7 +9,7 @@ import settingsLogo from './images/gear-solid.svg';
 import calendarLogo from './images/calendar-regular.svg';
 import mapLogo from './images/map-regular.svg';
 import warningLogo from './images/triangle-exclamation-solid.svg';
-import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
 
 const App = () => {
     const [divDisp, setDivDisp] = useState(true);
@@ -52,6 +52,74 @@ const App = () => {
     99:	{ label: "Thunderstorm with slight and heavy hail", icon: "⛈️" }
     }
 
+    const safetyLookup = (condition, val) => {
+        switch (condition){
+            case "windSpeed":
+                if (val == 0){
+                    return 0;
+                }
+                else if (val <= 24){
+                    return 1;
+                }
+                else if (val <= 38){
+                    return 2;
+                }
+                else{
+                    return 3;
+                }
+                
+            case "windGust":
+                if (val <= 37){
+                    return 1;
+                }
+                else if (val <= 50){
+                    return 2;
+                }
+                else{
+                    return 3;
+                }
+            case "waveHeight":
+                if (val == 0){
+                    return 0;
+                }
+                else if (val <= 2.5){
+                    return 1;
+                }
+                else if (val <= 4.5){
+                    return 2;
+                }
+                else{
+                    return 3;
+                }
+            case "swellHeight":
+                if (val == 0){
+                    return 0;
+                }
+                else if (val <= 2){
+                    return 1;
+                }
+                else if (val <= 4){
+                    return 2;
+                }
+                else{
+                    return 3;
+                }
+            case "seaTemp":
+                if (val <= 15 || val >= 44){
+                    return 3;
+                }
+                else if (val <= 21 || val >= 35 ){
+                    return 2;
+                }
+                else{
+                    return 1;
+                }
+            default:
+                return 0;
+            
+        }
+    }
+
     function UpdateMap(props) {
         const map = useMap();
         map.flyTo(props.center);
@@ -92,9 +160,9 @@ const App = () => {
                         {weatherData && !weatherData.marine.current[2][1] &&
                         <>
                         <div className="alert alert-warning alert-dismissable show">
-                            <img src={warningLogo} class="bi me-2" width="15"/>
+                            <img src={warningLogo} className="bi me-2" width="15"/>
                             <span>Marine weather conditions not detected at this location.</span>
-                            <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+                            <button type="button" className="btn-close float-end" data-bs-dismiss="alert"></button>
                         </div>
                         </>
                         }
@@ -114,8 +182,9 @@ const App = () => {
                                     text={"Precipitation"}
                                     click={switchVisibility}
                                 />
+
                                 <ForecastButton
-                                    safetynum={0}
+                                    safetynum={safetyLookup("windSpeed", parseFloat(weatherData ? weatherData.forecast.current[4][1] : 0))}
                                     numval={weatherData ? weatherData.forecast.current[4][1] : "N/A"}
                                     units={"mph"}
                                     text={"Wind Speed"}
@@ -130,7 +199,7 @@ const App = () => {
                                     click={switchVisibility}
                                 />
                                 <ForecastButton
-                                    safetynum={0}
+                                    safetynum={safetyLookup("windGust", parseFloat(weatherData ? weatherData.forecast.current[6][1] : 0))}
                                     numval={weatherData ? weatherData.forecast.current[6][1] : "N/A"}
                                     units={"mph"}
                                     text={"Wind Gusts"}
@@ -139,7 +208,7 @@ const App = () => {
                                 {weatherData && weatherData.marine.current[2][1] &&
                                 <>
                                 <ForecastButton
-                                    safetynum={0}
+                                    safetynum={safetyLookup("waveHeight", parseFloat(weatherData ? weatherData.marine.current[2][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[2][1] : "N/A"}
                                     units={"m"}
                                     text={"Wave Height"}
@@ -160,7 +229,7 @@ const App = () => {
                                     click={switchVisibility}
                                 />
                                 <ForecastButton
-                                    safetynum={0}
+                                    safetynum={safetyLookup("seaTemp", parseFloat(weatherData ? weatherData.marine.current[5][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[5][1] : "N/A"}
                                     units={"°C"}
                                     text={"Sea Surface Temperature"}
@@ -174,7 +243,7 @@ const App = () => {
                                     click={switchVisibility}
                                 />
                                 <ForecastButton
-                                    safetynum={0}
+                                    safetynum={safetyLookup("swellHeight", parseFloat(weatherData ? weatherData.marine.current[7][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[7][1] : "N/A"}
                                     units={"m"}
                                     text={"Swell Height"}

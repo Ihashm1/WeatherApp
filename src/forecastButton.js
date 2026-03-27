@@ -1,14 +1,22 @@
 import React from 'react';
-const safety = ["#DDFDFF", "#E6FFDD", "#FFF8DD", "#FFE5DD"];
+const safety = ["rgba(186, 250, 255, 1)", 
+                "rgba(204, 255, 186,1)", 
+                "rgba(255, 241, 183,1)", 
+                "rgba(255, 185, 164,1)"];
 const ForecastButton = ({safetynum, numval, units, text, click}) => {
+  
   return( 
     <button 
       onClick={click} 
-      style={{backgroundColor: safety[safetynum],height:"40vw",width:"40vw", maxWidth:"180px", maxHeight:"180px"}}
+      style={{height:"40vw",
+              width:"40vw", 
+              maxWidth:"180px", 
+              maxHeight:"180px", 
+              backgroundColor: (safety[safetynum])}}
       className="btn shadow-sm rounded-5 p-0" 
       type="button"
       >
-        <div className="row w-100 h-100 text-center align-items-center mx-auto p-0">
+        <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1">
             <h1 className="col mx-auto fw-semibold">{numval}{units}</h1>
             <h5 className="col mx-auto">{text}</h5>
         </div>
