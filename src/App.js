@@ -140,6 +140,9 @@ const App = () => {
                     </>
                 )}
             </div>
+ 
+     
+
             
             <div className='tab-content pb-4' id="app-tabcontent">
                 <div className="tab-pane" id="settings">
@@ -176,7 +179,7 @@ const App = () => {
                                     numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
                                     units={"°C"}
                                     text={"Feels like: " + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
-                                    onClick={() =>setModalClick("Temperature")}
+                                    click={() =>setModalClick("Temperature")}
                                 />
                                 <ForecastButton
                                     safetynum={0}
@@ -271,7 +274,7 @@ const App = () => {
                                         </div>
                                         <div className='modal-body'>
                                             {weatherData && geoData && 
-                                                <ForecastModal wData={weatherData} gData={geoData}/>
+                                                <ForecastModal wData={weatherData} modalClick={modalClick}/>
                                             }
                                         </div>
                                     </div>
