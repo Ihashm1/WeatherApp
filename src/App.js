@@ -14,6 +14,18 @@ import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import ForecastModal from './forecastModal';
 
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
+
 const App = () => {
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
@@ -294,7 +306,7 @@ const App = () => {
                                     numval={weatherData.forecast.current[2][1]}
                                     units={"C"}
                                     text={"Temperature"}
-                                    ////click={}
+                                    
                                 />
                                 </>
                             )}
