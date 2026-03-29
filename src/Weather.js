@@ -5,7 +5,7 @@ const Weather = (props) => {
 
     const fetchForecastData = async () => {
         try{
-            const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${props.latitude}&longitude=${props.longitude}&daily=temperature_2m_max,apparent_temperature_max,daylight_duration,sunrise,wind_speed_10m_max,wind_direction_10m_dominant,weather_code&hourly=temperature_2m,visibility,wind_speed_10m,apparent_temperature,precipitation_probability,wind_direction_10m,precipitation,wind_gusts_10m,temperature_80m,weather_code&current=temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,apparent_temperature,weather_code&wind_speed_unit=mph`)
+            const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${props.latitude}&longitude=${props.longitude}&daily=temperature_2m_max,apparent_temperature_max,daylight_duration,sunrise,wind_speed_10m_max,wind_direction_10m_dominant,weather_code,precipitation_sum&hourly=temperature_2m,visibility,wind_speed_10m,apparent_temperature,precipitation_probability,wind_direction_10m,precipitation,wind_gusts_10m,temperature_80m,weather_code&current=temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,apparent_temperature,weather_code&wind_speed_unit=mph`)
 
             if(!response.data){
                 return
@@ -20,7 +20,7 @@ const Weather = (props) => {
                 hourly_units: Object.entries(response.data.hourly_units)
             }
             
-            const response2 = await axios.get(`https://marine-api.open-meteo.com/v1/marine?latitude=${props.latitude}&longitude=${props.longitude}&daily=wave_height_max,wave_direction_dominant,swell_wave_height_max,swell_wave_direction_dominant&hourly=wave_height,sea_level_height_msl,wave_direction,swell_wave_height,swell_wave_direction,sea_surface_temperature&current=wave_height,wave_direction,sea_level_height_msl,sea_surface_temperature,swell_wave_direction,swell_wave_height`)
+            const response2 = await axios.get(`https://marine-api.open-meteo.com/v1/marine?latitude=${props.latitude}&longitude=${props.longitude}&daily=wave_height_max,wave_direction_dominant,swell_wave_height_max,swell_wave_direction_dominant,wave_period_max,swell_wave_period_max&hourly=wave_height,sea_level_height_msl,wave_direction,swell_wave_height,swell_wave_direction,sea_surface_temperature,wave_period,swell_wave_period&current=wave_height,wave_direction,sea_level_height_msl,sea_surface_temperature,swell_wave_direction,swell_wave_height,wave_period,swell_wave_period`)
 
             if(!response2.data){
                 return
@@ -35,7 +35,24 @@ const Weather = (props) => {
                 hourly_units: Object.entries(response2.data.hourly_units)
             }
 
-            props.sendData({forecast:farray, marine:marray});
+            props.sendData({forecast:farray, marine:marray})
+
+            console.log('=== forecast current ===')
+            console.log(farray.current)
+            console.log('=== forecast daily ===')
+            console.log(farray.daily)
+            console.log('=== forecast hourly (first 6h) ===')
+            farray.hourly.forEach(([key, val]) => {
+                if (key !== 'time') console.log(key, Array.isArray(val) ? val.slice(0,6) : val)
+            })
+            console.log('=== marine current ===')
+            console.log(marray.current)
+            console.log('=== marine daily ===')
+            console.log(marray.daily)
+            console.log('=== marine hourly (first 6h) ===')
+            marray.hourly.forEach(([key, val]) => {
+                if (key !== 'time') console.log(key, Array.isArray(val) ? val.slice(0,6) : val)
+            })
         }
         catch (error) {
             console.error(error);

@@ -124,6 +124,11 @@ const App = () => {
                 else{
                     return 1;
                 }
+            case "wavePeriod":
+                if (val === 0) return 0;
+                else if (val > 8) return 1;
+                else if (val > 5) return 2;
+                else return 3;
             default:
                 return 0;
             
@@ -272,6 +277,20 @@ const App = () => {
                                     units={"m"}
                                     text={"Swell Height"}
                                     click={() =>setModalClick("Swell Height")}
+                                />
+                                <ForecastButton
+                                    safetynum={safetyLookup("wavePeriod", parseFloat(weatherData ? weatherData.marine.current[8][1] : 0))}
+                                    numval={weatherData ? weatherData.marine.current[8][1] ?? "N/A" : "N/A"}
+                                    units={"s"}
+                                    text={"Wave Period"}
+                                    click={() => setModalClick("Wave Period")}
+                                />
+                                <ForecastButton
+                                    safetynum={safetyLookup("wavePeriod", parseFloat(weatherData ? weatherData.marine.current[9][1] : 0))}
+                                    numval={weatherData ? weatherData.marine.current[9][1] ?? "N/A" : "N/A"}
+                                    units={"s"}
+                                    text={"Swell Period"}
+                                    click={() => setModalClick("Swell Period")}
                                 />
                                 </>}
                             </div>
