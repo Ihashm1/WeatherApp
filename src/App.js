@@ -13,6 +13,7 @@ import warningLogo from './images/triangle-exclamation-solid.svg';
 import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import ForecastModal from './forecastModal';
+import PdfReport from './PdfReport';
 
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -191,6 +192,9 @@ const App = () => {
                         </div>
                         </>
                         }
+                        {weatherData && geoData && (
+                            <PdfReport weatherData={weatherData} geoData={geoData} />
+                        )}
                         <>
                             <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center p-1">
                                 {weatherData &&
@@ -298,14 +302,8 @@ const App = () => {
                                 <div className="modal-dialog modal-lg modal-fullscreen-md-down">
                                     <div className='modal-content'>
                                         <div className='modal-header'>
-                                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                             
-                                                {modalClick && (
-                                                    <>
-                                                    <h2>{modalClick}</h2>
-                                                    </>
-                                                )
-                                                }
+                                             {modalClick && <h2 className="modal-title">{modalClick}</h2>}
+                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className='modal-body'>
                                             {weatherData && geoData && 
