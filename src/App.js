@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import Weather from './Weather';
 import Geocoding from './Geocoding';
 import FutureWeather from './futureWeather';
@@ -10,6 +11,7 @@ import calendarLogo from './images/calendar-regular.svg';
 import mapLogo from './images/map-regular.svg';
 import warningLogo from './images/triangle-exclamation-solid.svg';
 import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
+import 'leaflet/dist/leaflet.css';
 import ForecastModal from './forecastModal';
 
 const App = () => {
@@ -118,11 +120,13 @@ const App = () => {
 
     function UpdateMap(props) {
         const map = useMap();
-        map.flyTo(props.center);
-        return(
-            <Marker position={props.center}>
-            </Marker>
-        );
+
+        useEffect(() => {
+            map.flyTo(props.center, 10);}, [props.center[0], props.center[1]]); // only run when lat/lng changes
+
+            return (
+                <Marker position={props.center}/>
+            );
     }
 
     return (
@@ -299,13 +303,15 @@ const App = () => {
                 </div>
                 <div className="tab-pane" id="map">
                     <div className="container-fluid p-3">
-                        <div className='h-100 w-100' style={{}}>
-                            <MapContainer center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [50,0]} zoom={10} scrollWheelZoom={true} style={{height:"80vh"}}>
+                        <div className='h-100 w-100'>
+                            <MapContainer center={geoData ?[parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [51.5, -0.1]} zoom={10} scrollWheelZoom={true} style={{height:"80vh"}}>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
-                                <UpdateMap center={geoData ? [parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [50,0]} />
+                                {geoData && (
+                                <UpdateMap center={[parseFloat(geoData.latitude), parseFloat(geoData.longitude)]} />
+                                )}
                             </MapContainer>
                         </div>
                     </div>
