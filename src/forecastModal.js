@@ -1,128 +1,183 @@
 import FutureWeather from "./futureWeather"
 
+// forecast.current indices (Object.entries of Open-Meteo response):
+// [2]=temperature_2m [3]=precipitation [4]=wind_speed_10m [5]=wind_direction_10m
+// [6]=wind_gusts_10m [7]=apparent_temperature [8]=weather_code
+//
+// forecast.daily indices:
+// [0]=time [1]=temperature_2m_max [2]=apparent_temperature_max [3]=daylight_duration
+// [4]=sunrise [5]=wind_speed_10m_max [6]=wind_direction_10m_dominant [7]=weather_code [8]=precipitation_sum
+//
+// forecast.hourly indices:
+// [0]=time [1]=temperature_2m [2]=visibility [3]=wind_speed_10m [4]=apparent_temperature
+// [5]=precipitation_probability [6]=wind_direction_10m [7]=precipitation [8]=wind_gusts_10m
+//
+// marine.current indices:
+// [2]=wave_height [3]=wave_direction [4]=sea_level_height_msl [5]=sea_surface_temperature
+// [6]=swell_wave_direction [7]=swell_wave_height [8]=wave_period [9]=swell_wave_period
+//
+// marine.daily indices:
+// [0]=time [1]=wave_height_max [2]=wave_direction_dominant [3]=swell_wave_height_max
+// [4]=swell_wave_direction_dominant [5]=wave_period_max [6]=swell_wave_period_max
+//
+// marine.hourly indices:
+// [0]=time [1]=wave_height [2]=sea_level_height_msl [3]=wave_direction [4]=swell_wave_height
+// [5]=swell_wave_direction [6]=sea_surface_temperature [7]=wave_period [8]=swell_wave_period
+
 const ForecastModal = ({ wData, modalClick }) => {
     if (!wData || !modalClick) return null;
 
-    const weatherLookup = {
-        0:  { label: "Clear Sky",  icon: "☀️" },
-        1:  { label: "Mainly clear", icon: "🌤️" },
-        2:  { label: "Partly cloudy", icon: "⛅" },
-        3:  { label: "Overcast", icon: "☁️" },
-        45: { label: "Fog", icon: "🌫️" },
-        48: { label: "Rime fog", icon: "🌫️" },
-        51: { label: "Light drizzle", icon: "🌦️" },
-        53: { label: "Moderate drizzle", icon: "🌦️" },
-        55: { label: "Dense drizzle", icon: "🌦️" },
-        61: { label: "Slight rain", icon: "🌧️" },
-        63: { label: "Moderate rain", icon: "🌧️" },
-        65: { label: "Heavy rain", icon: "🌧️" },
-        71: { label: "Slight snow", icon: "🌨️" },
-        73: { label: "Moderate snow", icon: "🌨️" },
-        75: { label: "Heavy snow", icon: "🌨️" },
-        80: { label: "Showers", icon: "🌧️" },
-        95: { label: "Thunderstorm", icon: "⛈️" },
-        99: { label: "Thunderstorm w/ hail", icon: "⛈️" },
-    }
+    const f = wData.forecast;
+    const m = wData.marine;
 
     if (modalClick === "Temperature") return (
         <FutureWeather
-            currentVal={weatherLookup[wData.forecast.current[8][1]]?.icon + " " + wData.forecast.current[2][1]}
-            currentLabel={"Feels like: " + wData.forecast.current[7][1] + "°C"}
-            DailyTimeArr={wData.forecast.daily[0][1]}
-            DailyValArr={wData.forecast.daily[1][1]}
+            currentVal={f.current[2][1]}
+            currentLabel={"Wind Chill: feels like " + f.current[7][1] + "°C"}
+            DailyTimeArr={f.daily[0][1]}
+            DailyValArr={f.daily[1][1]}
+            DailyIconArr={f.daily[7][1]}
+            HourlyTimeArr={f.hourly[0][1]}
+            HourlyValArr={f.hourly[1][1]}
             units="°C"
         />
-    )
+    );
     if (modalClick === "Precipitation") return (
         <FutureWeather
-            currentVal={wData.forecast.current[3][1]}
+            currentVal={f.current[3][1]}
             currentLabel={"Current precipitation"}
-            DailyTimeArr={wData.forecast.daily[0][1]}
-            DailyValArr={wData.forecast.daily[1][1]}
+            DailyTimeArr={f.daily[0][1]}
+            DailyValArr={f.daily[8][1]}
+            DailyIconArr={f.daily[7][1]}
+            HourlyTimeArr={f.hourly[0][1]}
+            HourlyValArr={f.hourly[7][1]}
             units="mm"
         />
-    )
+    );
     if (modalClick === "Wind Speed") return (
         <FutureWeather
-            currentVal={wData.forecast.current[4][1]}
-            currentLabel={"Gusts: " + wData.forecast.current[6][1] + " mph"}
-            DailyTimeArr={wData.forecast.daily[0][1]}
-            DailyValArr={wData.forecast.daily[5][1]}
+            currentVal={f.current[4][1]}
+            currentLabel={"Gusts: " + f.current[6][1] + " mph"}
+            DailyTimeArr={f.daily[0][1]}
+            DailyValArr={f.daily[5][1]}
+            DailyIconArr={f.daily[7][1]}
+            HourlyTimeArr={f.hourly[0][1]}
+            HourlyValArr={f.hourly[3][1]}
             units="mph"
         />
-    )
+    );
     if (modalClick === "Wind Direction") return (
         <FutureWeather
-            currentVal={wData.forecast.current[5][1]}
+            currentVal={f.current[5][1]}
             currentLabel={"Wind Direction"}
-            DailyTimeArr={wData.forecast.daily[0][1]}
-            DailyValArr={wData.forecast.daily[6][1]}
+            DailyTimeArr={f.daily[0][1]}
+            DailyValArr={f.daily[6][1]}
+            DailyIconArr={f.daily[7][1]}
+            HourlyTimeArr={f.hourly[0][1]}
+            HourlyValArr={f.hourly[6][1]}
             units="°"
         />
-    )
+    );
     if (modalClick === "Wind Gusts") return (
         <FutureWeather
-            currentVal={wData.forecast.current[6][1]}
+            currentVal={f.current[6][1]}
             currentLabel={"Wind Gusts"}
-            DailyTimeArr={wData.forecast.daily[0][1]}
-            DailyValArr={wData.forecast.daily[5][1]}
+            DailyTimeArr={f.daily[0][1]}
+            DailyValArr={f.daily[5][1]}
+            DailyIconArr={f.daily[7][1]}
+            HourlyTimeArr={f.hourly[0][1]}
+            HourlyValArr={f.hourly[8][1]}
             units="mph"
         />
-    )
+    );
     if (modalClick === "Wave Height") return (
         <FutureWeather
-            currentVal={wData.marine.current[2][1]}
-            currentLabel={"Direction: " + wData.marine.current[3][1] + "°"}
-            DailyTimeArr={wData.marine.daily[0][1]}
-            DailyValArr={wData.marine.daily[1][1]}
+            currentVal={m.current[2][1]}
+            currentLabel={"Direction: " + m.current[3][1] + "°"}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[1][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[1][1]}
             units="m"
         />
-    )
+    );
     if (modalClick === "Wave Direction") return (
         <FutureWeather
-            currentVal={wData.marine.current[3][1]}
+            currentVal={m.current[3][1]}
             currentLabel={"Wave Direction"}
-            DailyTimeArr={wData.marine.daily[0][1]}
-            DailyValArr={wData.marine.daily[2][1]}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[2][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[3][1]}
             units="°"
         />
-    )
+    );
     if (modalClick === "Sea Level Height") return (
         <FutureWeather
-            currentVal={wData.marine.current[4][1]}
+            currentVal={m.current[4][1]}
             currentLabel={"Sea Level Height"}
-            DailyTimeArr={wData.marine.daily[0][1]}
-            DailyValArr={wData.marine.daily[1][1]}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[1][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[2][1]}
             units="m"
         />
-    )
+    );
     if (modalClick === "Sea Surface Temperature") return (
         <FutureWeather
-            currentVal={wData.marine.current[5][1]}
+            currentVal={m.current[5][1]}
             currentLabel={"Sea Surface Temperature"}
-            DailyTimeArr={wData.marine.daily[0][1]}
-            DailyValArr={wData.marine.daily[1][1]}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[1][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[6][1]}
             units="°C"
         />
-    )
+    );
     if (modalClick === "Swell Direction") return (
         <FutureWeather
-            currentVal={wData.marine.current[6][1]}
+            currentVal={m.current[6][1]}
             currentLabel={"Swell Direction"}
-            DailyTimeArr={wData.marine.daily[0][1]}
-            DailyValArr={wData.marine.daily[4][1]}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[4][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[5][1]}
             units="°"
         />
-    )
+    );
     if (modalClick === "Swell Height") return (
         <FutureWeather
-            currentVal={wData.marine.current[7][1]}
-            currentLabel={"Direction: " + wData.marine.current[6][1] + "°"}
-            DailyTimeArr={wData.marine.daily[0][1]}
-            DailyValArr={wData.marine.daily[3][1]}
+            currentVal={m.current[7][1]}
+            currentLabel={"Direction: " + m.current[6][1] + "°"}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[3][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[4][1]}
             units="m"
         />
-    )
+    );
+    if (modalClick === "Wave Period") return (
+        <FutureWeather
+            currentVal={m.current[8][1]}
+            currentLabel={"Wave Period — lower is choppier"}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[5][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[7][1]}
+            units="s"
+        />
+    );
+    if (modalClick === "Swell Period") return (
+        <FutureWeather
+            currentVal={m.current[9][1]}
+            currentLabel={"Swell Wave Period"}
+            DailyTimeArr={m.daily[0][1]}
+            DailyValArr={m.daily[6][1]}
+            HourlyTimeArr={m.hourly[0][1]}
+            HourlyValArr={m.hourly[8][1]}
+            units="s"
+        />
+    );
 
     return null;
 }

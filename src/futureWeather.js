@@ -1,20 +1,66 @@
-const FutureWeather = ({ currentVal, currentLabel, DailyTimeArr, DailyValArr, units }) => {
+import LineChart from "./graphDisplay";
+
+const weatherIconLookup = {
+    0: "☀️", 1: "🌤️", 2: "⛅", 3: "☁️",
+    45: "🌫️", 48: "🌫️",
+    51: "🌦️", 53: "🌦️", 55: "🌦️",
+    56: "🌧️", 57: "🌧️",
+    61: "🌧️", 63: "🌧️", 65: "🌧️",
+    66: "🌧️", 67: "🌧️",
+    71: "🌨️", 73: "🌨️", 75: "🌨️",
+    77: "🌨️",
+    80: "🌧️", 81: "🌧️", 82: "🌧️",
+    85: "🌨️", 86: "🌨️",
+    95: "⛈️", 96: "⛈️", 99: "⛈️"
+};
+
+const FutureWeather = ({ currentVal, currentLabel, DailyTimeArr, DailyValArr, DailyIconArr, HourlyTimeArr, HourlyValArr, units }) => {
 
     if (!DailyTimeArr || !DailyValArr) return <p>Loading...</p>;
 
+    let hourlyLabels = [];
+    let hourlyValues = [];
+    if (HourlyTimeArr && HourlyValArr) {
+        const now = new Date();
+        let startIdx = HourlyTimeArr.findIndex(t => new Date(t) >= now);
+        if (startIdx < 0) startIdx = 0;
+        const slice = HourlyTimeArr.slice(startIdx, startIdx + 24);
+        hourlyLabels = slice.map(t => new Date(t).getHours().toString().padStart(2, '0') + ':00');
+        hourlyValues = HourlyValArr.slice(startIdx, startIdx + 24);
+    }
+
     return (
         <div>
-            <h2>Current</h2>
-            <p>{currentVal} {units}</p>
-            <p>{currentLabel}</p>
+            <div className="card mb-3 border-0 shadow-sm" style={{ backgroundColor: "#eef1fb" }}>
+                <div className="card-body">
+                    <h3 className="card-title mb-1">{currentVal} {units}</h3>
+                    <p className="card-text mb-0" style={{ color: "#5a6acf" }}>{currentLabel}</p>
+                </div>
+            </div>
 
-            <h2>Daily</h2>
-            {DailyTimeArr.map((date, index) => (
-                <p key={index}>
-                    {new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-                    — {DailyValArr[index]} {units}
-                </p>
-            ))}
+            {hourlyLabels.length > 0 && (
+                <div className="card mb-3 border-0 shadow-sm p-3">
+                    <LineChart labels={hourlyLabels} values={hourlyValues} name={""} units={units} />
+                </div>
+            )}
+
+            <div className="d-flex overflow-auto gap-2 pb-1">
+                {DailyTimeArr.map((date, index) => (
+                    <div key={index} className="card border-0 shadow-sm text-center flex-shrink-0" style={{ minWidth: "72px", backgroundColor: "#eef1fb" }}>
+                        <div className="card-body p-2">
+                            {DailyIconArr && (
+                                <div style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
+                                    {weatherIconLookup[DailyIconArr[index]] ?? "—"}
+                                </div>
+                            )}
+                            <div className="fw-semibold small">{DailyValArr[index]}{units}</div>
+                            <small className="text-muted">
+                                {new Date(date).toLocaleDateString('en-GB', { weekday: 'short' })}
+                            </small>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
