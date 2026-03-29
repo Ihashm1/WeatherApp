@@ -78,7 +78,7 @@ const chartToDataUrl = (labels, values, title) => {
                 backgroundColor: 'rgba(180,195,240,0.35)',
                 fill: true,
                 tension: 0.4,
-                pointRadius: 3,
+                pointRadius: 2,
             }]
         },
         options: {
@@ -86,8 +86,8 @@ const chartToDataUrl = (labels, values, title) => {
             responsive: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { grid: { color: 'rgba(0,0,0,0.06)' } },
-                x: { grid: { display: false } }
+                y: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { maxTicksLimit: 5 } },
+                x: { grid: { color: 'rgba(0,0,0,0.06)' } }
             }
         }
     })
