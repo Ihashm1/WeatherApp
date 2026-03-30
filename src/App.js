@@ -33,6 +33,9 @@ const App = () => {
     const [DModeFlag, setDModeFlag] = useState(false);
     const [WindUnitFlag, setWindUnitFlag] = useState(false);
     const [BoatSizeFlag, setBoatSizeFlag] = useState(false);
+    const [boatLength, setBoatLength] = useState('');
+    const [freeboard, setFreeboard] = useState('');
+
 
     const weatherLookup = {
     0:  { label: "Clear Sky",  icon: "☀️"  },
@@ -138,6 +141,45 @@ const App = () => {
         }
     }
 
+            const getSailingRecommendation = () => {
+
+                if (!weatherData || !weatherData.marine.current[2][1]) return null;
+                if (!boatLength || !freeboard) return { level: 0, reasons: [] };
+
+                const wind   = parseFloat(weatherData.forecast.current[4][1]);
+                const gusts  = parseFloat(weatherData.forecast.current[6][1]);
+                const waves  = parseFloat(weatherData.marine.current[2][1]);
+                const swell  = parseFloat(weatherData.marine.current[7][1]);
+                const length = parseFloat(boatLength);
+                const fb     = parseFloat(freeboard);
+
+                let reasons = [];
+
+                // EXTREME
+                if (waves > length * 0.5) reasons.push("waves too large for vessel");
+                if (waves > fb) reasons.push("waves exceed freeboard");
+                if (wind > 38) reasons.push("extreme winds");
+                if (gusts > 50) reasons.push("extreme gusts");
+                if (swell > 4) reasons.push("dangerous swell");
+
+                if (reasons.length > 0) {
+                    return { level: 3, reasons };
+                }
+
+                // MODERATE
+                if (waves > length * 0.33) reasons.push("waves challenging for vessel length");
+                if (waves > fb * 0.75) reasons.push("waves near freeboard");
+                if (wind > 24) reasons.push("strong winds");
+                if (gusts > 37) reasons.push("strong gusts");
+                if (swell > 2) reasons.push("significant swell");
+
+                if (reasons.length > 0) {
+                    return { level: 2, reasons };
+                }
+            }
+
+
+
     function UpdateMap(props) {
         const map = useMap();
 
@@ -205,6 +247,28 @@ const App = () => {
                                         Cargo ship
                                     </label>
                                 </div>
+                            <div>
+                                <h4>Vessel Settings:</h4>
+                                <div>
+                                  <p> Boat length: (metres)</p>
+                                  <input
+                                    type="number"
+                                    placeholder = "0"
+                                    value = {boatLength}
+                                    onChange={(e) => setBoatLength(e.target.value)}
+                                    />
+
+                                    <p>Freeboard Height: (metres)</p>
+                                        <input
+                                        type ="number"
+                                        placeholder = "0"
+                                        value={freeboard}
+                                        onChange={(e) => setFreeboard(e.target.value)}
+                                        />
+
+                                </div>
+
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -364,6 +428,28 @@ const App = () => {
                                 </div>
                             </div>
                         </>
+
+
+
+                        
+                        {weatherData && weatherData.marine.current[2][1] && (() => {
+                            const result = getSailingRecommendation();
+                            if (result === null) return null;
+
+                            const level = result.level;
+                            const reason = result.reasons.join(", ");
+
+                            const colours  = ['rgba(186,250,255,1)', 'rgba(204,255,186,1)', 'rgba(255,241,183,1)', 'rgba(255,185,164,1)'];
+                            const messages = ['Set your vessel details in Settings for a sailing recommendation.', '✅ Good sailing conditions', '⚠️ Challenging, sail with care', '❗ Dangerous,  not recommended'];
+                            return (
+                                <div style={{backgroundColor: colours[level], marginTop: '100px'}} className="p-3 rounded-4 shadow-sm text-center">
+                                    <h5>{messages[level]}</h5>
+                                    {reason && <p className="mb-0">Due to: {reason}</p>}
+                                </div>
+                            );
+                        })()}
+
+
                     
                         <div id="LineChart" className={"hidden"}>
                             {weatherData &&(
