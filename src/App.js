@@ -150,33 +150,39 @@ const App = () => {
                 const gusts  = parseFloat(weatherData.forecast.current[6][1]);
                 const waves  = parseFloat(weatherData.marine.current[2][1]);
                 const swell  = parseFloat(weatherData.marine.current[7][1]);
+                const wavePeriod  = parseFloat(weatherData.marine.current[8][1]);
+                const swellPeriod = parseFloat(weatherData.marine.current[9][1]);
                 const length = parseFloat(boatLength);
                 const fb     = parseFloat(freeboard);
+                
 
                 let reasons = [];
 
-                // EXTREME
-                if (waves > length * 0.5) reasons.push("waves too large for vessel");
+                // Extreme Conditions (Level 3)
+                if (waves > length * 0.5) reasons.push("waves too large for vessel >1/2 length");
                 if (waves > fb) reasons.push("waves exceed freeboard");
                 if (wind > 38) reasons.push("extreme winds");
                 if (gusts > 50) reasons.push("extreme gusts");
                 if (swell > 4) reasons.push("dangerous swell");
+                if (wavePeriod < 4) reasons.push("very short wave period (rough sea)");
+                if (swellPeriod > 14) reasons.push("very long swell period");
 
-                if (reasons.length > 0) {
-                    return { level: 3, reasons };
-                }
+                if (reasons.length > 0) return { level: 3, reasons };
 
-                // MODERATE
+                // Moderate Conditions (Level 2)
                 if (waves > length * 0.33) reasons.push("waves challenging for vessel length");
                 if (waves > fb * 0.75) reasons.push("waves near freeboard");
                 if (wind > 24) reasons.push("strong winds");
                 if (gusts > 37) reasons.push("strong gusts");
-                if (swell > 2) reasons.push("significant swell");
+                if (swell > 2) reasons.push("large swell");
+                if (wavePeriod < 6) reasons.push("choppy wave conditions (low wave period)");
+                if (swellPeriod > 12) reasons.push("Quite a long-period swell");
 
-                if (reasons.length > 0) {
-                    return { level: 2, reasons };
-                }
-            }
+                if (reasons.length > 0) return { level: 2, reasons };
+
+                // Safe Conditions (Level 1)
+                return { level: 1, reasons: [] };
+            };
 
 
 
