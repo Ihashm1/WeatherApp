@@ -15,3 +15,12 @@ code {
 .hidden{
   display: none;
 }
+
+.nav-pills>li>a {
+      background-color: rgb(248, 249, 250);
+    }
+
+.btn.btn-primary.active {
+  background-color: rgb(37, 33, 67);
+  border-color: rgb(18, 5, 30);
+}

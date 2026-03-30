@@ -31,6 +31,7 @@ const App = () => {
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
     const [modalClick, setModalClick] = useState(null);
+    const [DModeFlag, setDModeFlag] = useState(false);
 
     const weatherLookup = {
     0:  { label: "Clear Sky",  icon: "☀️"  },
@@ -146,10 +147,11 @@ const App = () => {
                 <Marker position={props.center}/>
             );
     }
-
+//normal: #cbd2e3
+//dark bg: #234178
     return (
         <>
-        <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh",backgroundColor:"#cbd2e3"}}>
+        <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh",backgroundColor: DModeFlag ? "#234178" : "#cbd2e3"}}>
             <div className="p-3 pb-1">
                 <Geocoding sendData={setGeoData}/>
                     {geoData && (
@@ -169,7 +171,8 @@ const App = () => {
             <div className='tab-content pb-4' id="app-tabcontent">
                 <div className="tab-pane" id="settings">
                     <div className="">
-                        <p>Settings</p>
+                        <h3 style={{color: DModeFlag?"whitesmoke": "black"}}>Settings</h3>
+                        <button type='button' className='btn btn-primary' data-bs-toggle="button" onClick={() => setDModeFlag(!DModeFlag)}> Dark mode</button>
                     </div>
                 </div>
                 <div className='tab-pane show active' id="forecasts">
@@ -349,17 +352,17 @@ const App = () => {
             
         </div>
         <div>
-            <nav className='navbar fixed-bottom bg-light justify-content-center'>
+            <nav className={DModeFlag ? "navbar fixed-bottom bg-dark justify-content-center" : "navbar fixed-bottom bg-light justify-content-center"}>
                 <ul className="nav nav-pills justify-content-center row" role="tablist">
-                    <li className="nav-item col justify-content-center text-center">
+                    <li className={DModeFlag ? "nav-item text-light col justify-content-center text-center" : "nav-item nav-light col justify-content-center text-center"}>
                         <a className="nav-link" data-bs-toggle="pill" data-bs-target="#settings" type="button"><img src={settingsLogo} style={{height:'20px'}}/></a>
                         <small>Settings</small>
                     </li>
-                    <li className="nav-item col justify-content-center text-center">
+                    <li className={DModeFlag ? "nav-item text-light col justify-content-center text-center" : "nav-item nav-light col justify-content-center text-center"}>
                         <a className="nav-link active mx-auto" data-bs-toggle="pill" data-bs-target="#forecasts" type="button"><img src={calendarLogo} style={{height:'20px'}}/></a>
                         <small>Forecasts</small>
                     </li>
-                    <li className="nav-item col justify-content-center text-center">
+                    <li className={DModeFlag ? "nav-item text-light col justify-content-center text-center" : "nav-item nav-light col justify-content-center text-center"}>
                         <a className="nav-link" data-bs-toggle="pill" data-bs-target="#map" type="button"><img src={mapLogo} style={{height:'20px'}}/></a>
                         <small>Map</small>
                     </li>
