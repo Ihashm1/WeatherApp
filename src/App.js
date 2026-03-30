@@ -32,6 +32,8 @@ const App = () => {
     const [weatherData, setWeatherData] = useState('');
     const [modalClick, setModalClick] = useState(null);
     const [DModeFlag, setDModeFlag] = useState(false);
+    const [WindUnitFlag, setWindUnitFlag] = useState(false);
+    const [BoatSizeFlag, setBoatSizeFlag] = useState(false);
 
     const weatherLookup = {
     0:  { label: "Clear Sky",  icon: "☀️"  },
@@ -168,11 +170,46 @@ const App = () => {
      
 
             
-            <div className='tab-content pb-4' id="app-tabcontent">
+            <div className='tab-content pb-4' id="app-tabcontent" style={{color: DModeFlag?"whitesmoke":"black"}}>
                 <div className="tab-pane" id="settings">
                     <div className="">
-                        <h3 style={{color: DModeFlag?"whitesmoke": "black"}}>Settings</h3>
-                        <button type='button' className='btn btn-primary' data-bs-toggle="button" onClick={() => setDModeFlag(!DModeFlag)}> Dark mode</button>
+                        <h3>Settings</h3>
+                        <div className="d-grid gap-3">
+                            <div className="form-check form-switch">
+                                <input className="form-check-input" type="checkbox" id="DarkmodeSwitchCheck" onClick={() => setDModeFlag(!DModeFlag)}></input>
+                                <label className="form-check-label" htmlFor="DarkmodeSwitchCheck">Dark Mode</label>
+                            </div>
+                            <div>
+                                <h4>Wind Speed Units:</h4>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setWindUnitFlag(true)} defaultChecked></input>
+                                    <label className="form-check-label" htmlFor="WindUnitRadios1">
+                                        MPH
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setWindUnitFlag(false)}></input>
+                                    <label className="form-check-label" htmlFor="WindUnitRadios2">
+                                        Knots
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <h4>Boat Size:</h4>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios1" onClick={() => setBoatSizeFlag(true)} defaultChecked></input>
+                                    <label className="form-check-label" htmlFor="BoatSizeRadios1">
+                                        Passenger ship
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios2" onClick={() => setBoatSizeFlag(false)}></input>
+                                    <label className="form-check-label" htmlFor="BoatSizeRadios2">
+                                        Cargo ship
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className='tab-pane show active' id="forecasts">
