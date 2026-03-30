@@ -8,6 +8,7 @@ import settingsLogo from './images/gear-solid.svg';
 import calendarLogo from './images/calendar-regular.svg';
 import mapLogo from './images/map-regular.svg';
 import warningLogo from './images/triangle-exclamation-solid.svg';
+import wavesImg from './images/waves.jpeg';
 import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import ForecastModal from './forecastModal';
@@ -151,7 +152,7 @@ const App = () => {
 //dark bg: #234178
     return (
         <>
-        <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh",backgroundColor: DModeFlag ? "#234178" : "#cbd2e3"}}>
+        <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)", backdropFilter:"blur(1px)"}}>
             <div className="p-3 pb-1">
                 <Geocoding sendData={setGeoData} darkMode={DModeFlag}/>
                     {geoData && (
