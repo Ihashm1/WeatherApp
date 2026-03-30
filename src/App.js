@@ -238,41 +238,27 @@ const App = () => {
                                         Knots
                                     </label>
                                 </div>
-                            </div>
-                            <div>
-                                <h4>Boat Size:</h4>
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios1" onClick={() => setBoatSizeFlag(true)} defaultChecked></input>
-                                    <label className="form-check-label" htmlFor="BoatSizeRadios1">
-                                        Passenger ship
-                                    </label>
-                                </div>
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios2" onClick={() => setBoatSizeFlag(false)}></input>
-                                    <label className="form-check-label" htmlFor="BoatSizeRadios2">
-                                        Cargo ship
-                                    </label>
-                                </div>
-                            <div>
-                                <h4>Vessel Settings:</h4>
+                        
                                 <div>
-                                  <p> Boat length: (metres)</p>
-                                  <input
-                                    type="number"
-                                    placeholder = "0"
-                                    value = {boatLength}
-                                    onChange={(e) => setBoatLength(e.target.value)}
-                                    />
-
-                                    <p>Freeboard Height: (metres)</p>
+                                    <h4>Vessel Settings:</h4>
+                                    <div>
+                                        <p> Boat length: (metres)</p>
                                         <input
-                                        type ="number"
-                                        placeholder = "0"
-                                        value={freeboard}
-                                        onChange={(e) => setFreeboard(e.target.value)}
-                                        />
+                                            type="number"
+                                            placeholder = "0"
+                                            value = {boatLength}
+                                            onChange={(e) => setBoatLength(e.target.value)}
+                                            />
 
-                                </div>
+                                            <p>Freeboard Height: (metres)</p>
+                                                <input
+                                                type ="number"
+                                                placeholder = "0"
+                                                value={freeboard}
+                                                onChange={(e) => setFreeboard(e.target.value)}
+                                                />
+                                            
+                                    </div>
 
                             </div>
                             </div>
