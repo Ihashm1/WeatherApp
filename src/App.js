@@ -200,7 +200,7 @@ const App = () => {
 //dark bg: #234178
     return (
         <>
-        <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)", backdropFilter:"blur(1px)"}}>
+        <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)"}}>
             <div className="p-3 pb-1">
                 <Geocoding sendData={setGeoData} darkMode={DModeFlag}/>
                     {geoData && (
@@ -209,6 +209,7 @@ const App = () => {
                         sendData={setWeatherData}
                         latitude={geoData.latitude}
                         longitude={geoData.longitude}
+                        unitflag={WindUnitFlag}
                     />
                     </>
                 )}
@@ -227,13 +228,13 @@ const App = () => {
                             <div>
                                 <h4>Wind Speed Units:</h4>
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setWindUnitFlag(true)} defaultChecked></input>
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setWindUnitFlag(false)} defaultChecked></input>
                                     <label className="form-check-label" htmlFor="WindUnitRadios1">
                                         MPH
                                     </label>
                                 </div>
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setWindUnitFlag(false)}></input>
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setWindUnitFlag(true)}></input>
                                     <label className="form-check-label" htmlFor="WindUnitRadios2">
                                         Knots
                                     </label>
@@ -312,9 +313,9 @@ const App = () => {
                                 <ForecastButton
                                     safetynum={safetyLookup("windSpeed", parseFloat(weatherData ? weatherData.forecast.current[4][1] : 0))}
                                     numval={weatherData ? weatherData.forecast.current[4][1] : "N/A"}
-                                    units={"mph"}
+                                    units={WindUnitFlag?"kn":"mph"}
                                     text={"Wind Speed"}
-                                    click={() =>setModalClick("Wind Speed")}
+                                    click={() =>WindUnitFlag?setModalClick("Wind Speed(kn)"):setModalClick("Wind Speed(mph)")}
                                     darkMode={DModeFlag}
                                 />
                                 <ForecastButton
@@ -329,9 +330,9 @@ const App = () => {
                                 <ForecastButton
                                     safetynum={safetyLookup("windGust", parseFloat(weatherData ? weatherData.forecast.current[6][1] : 0))}
                                     numval={weatherData ? weatherData.forecast.current[6][1] : "N/A"}
-                                    units={"mph"}
+                                    units={WindUnitFlag?"kn":"mph"}
                                     text={"Wind Gusts"}
-                                    click={() =>setModalClick("Wind Gusts")}
+                                    click={() =>WindUnitFlag?setModalClick("Wind Gusts(kn)"):setModalClick("Wind Gusts(mph)")}
                                     darkMode={DModeFlag}
                                 />
                                 </>
@@ -432,9 +433,10 @@ const App = () => {
                             const reason = result.reasons.join(", ");
 
                             const colours  = ['rgba(186,250,255,1)', 'rgba(204,255,186,1)', 'rgba(255,241,183,1)', 'rgba(255,185,164,1)'];
+                            const coloursDark = ["rgb(110, 164, 168)", "rgb(129, 168, 113)", "rgb(181, 166, 115)", "rgb(165, 110, 93)"];
                             const messages = ['Set your vessel details in Settings for a sailing recommendation.', '✅ Good sailing conditions', '⚠️ Challenging, sail with care', '❗ Dangerous,  not recommended'];
                             return (
-                                <div style={{backgroundColor: colours[level], marginTop: '100px'}} className="p-3 rounded-4 shadow-sm text-center">
+                                <div style={{backgroundColor: DModeFlag? coloursDark[level] : colours[level], marginTop: '100px'}} className="p-3 rounded-4 shadow-sm text-center text-dark">
                                     <h5>{messages[level]}</h5>
                                     {reason && <p className="mb-0">Due to: {reason}</p>}
                                 </div>

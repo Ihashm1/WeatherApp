@@ -5,7 +5,7 @@ const Weather = (props) => {
 
     const fetchForecastData = async () => {
         try{
-            const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${props.latitude}&longitude=${props.longitude}&daily=temperature_2m_max,apparent_temperature_max,daylight_duration,sunrise,wind_speed_10m_max,wind_direction_10m_dominant,weather_code,precipitation_sum&hourly=temperature_2m,visibility,wind_speed_10m,apparent_temperature,precipitation_probability,wind_direction_10m,precipitation,wind_gusts_10m,temperature_80m,weather_code&current=temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,apparent_temperature,weather_code&wind_speed_unit=mph`)
+            const response = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${props.latitude}&longitude=${props.longitude}&daily=temperature_2m_max,apparent_temperature_max,daylight_duration,sunrise,wind_speed_10m_max,wind_direction_10m_dominant,weather_code,precipitation_sum&hourly=temperature_2m,visibility,wind_speed_10m,apparent_temperature,precipitation_probability,wind_direction_10m,precipitation,wind_gusts_10m,temperature_80m,weather_code&current=temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,apparent_temperature,weather_code&wind_speed_unit=${props.unitflag ? `kn`:`mph`}`)
 
             if(!response.data){
                 return
