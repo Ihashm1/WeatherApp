@@ -131,6 +131,8 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
 
     // Check if marine data is available to determine which metrics can be included in the report
     const marineAvailable = weatherData?.marine?.current[2][1] != null
+    const toTemp = (c) => tempUnitFlag ? Math.round((parseFloat(c) * 9/5 + 32) * 10) / 10 : c
+    const tUnit = tempUnitFlag ? '°F' : '°C'
 
     // set default selected metrics based on availability of the marine data
     const defaultKeys = ALL_METRICS
@@ -186,8 +188,13 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                 if (!metric) continue
                 if (y > 245) { doc.addPage(); y = 20 }
 
-                const cur = getCurrentVal(weatherData, key)
-                const hourly = getHourlyData(weatherData, key)
+                const cur = key === 'Temperature' ? toTemp(getCurrentVal(weatherData, key))
+                           : key === 'Sea Surface Temperature' ? toTemp(getCurrentVal(weatherData, key))
+                           : getCurrentVal(weatherData, key)
+                const rawHourly = getHourlyData(weatherData, key)
+                const hourly = (rawHourly && (key === 'Temperature' || key === 'Sea Surface Temperature'))
+                    ? { labels: rawHourly.labels, vals: rawHourly.vals.map(v => toTemp(v)) }
+                    : rawHourly
 
                 //section header
                 doc.setFontSize(13)
@@ -201,7 +208,8 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                     if (metric.textOnly) {
                         doc.text(String(cur), margin, y)
                     } else {
-                        doc.text(`Current: ${cur} ${metric.unit}`, margin, y)
+                        const unit = (key === 'Temperature' || key === 'Sea Surface Temperature') ? tUnit : metric.unit
+                        doc.text(`Current: ${cur} ${unit}`, margin, y)
                         if (key === 'Wind Speed' || key === 'Wind Gusts') {
 
                             //annotate with beaufort force
