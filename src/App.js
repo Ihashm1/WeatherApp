@@ -36,6 +36,10 @@ const App = () => {
     const [DModeFlag, setDModeFlag] = useState(false);
     const [WindUnitFlag, setWindUnitFlag] = useState(false);
     const [BoatSizeFlag, setBoatSizeFlag] = useState(false);
+    const [TempUnitFlag, setTempUnitFlag] = useState(false); // false = °C, true = °F
+
+    const toTemp = (c) => TempUnitFlag ? Math.round((parseFloat(c) * 9/5 + 32) * 10) / 10 : c;
+    const tempUnit = TempUnitFlag ? '°F' : '°C';
 
     //vessel details set in settings
     const [boatLength, setBoatLength] = useState('');
@@ -253,7 +257,19 @@ const App = () => {
                                         Knots
                                     </label>
                                 </div>
-                        
+
+                                <div>
+                                    <h4>Temperature Units:</h4>
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name="TempUnitRadios" id="TempUnitRadios1" onClick={() => setTempUnitFlag(false)} defaultChecked></input>
+                                        <label className="form-check-label" htmlFor="TempUnitRadios1">°C (Celsius)</label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name="TempUnitRadios" id="TempUnitRadios2" onClick={() => setTempUnitFlag(true)}></input>
+                                        <label className="form-check-label" htmlFor="TempUnitRadios2">°F (Fahrenheit)</label>
+                                    </div>
+                                </div>
+
                                 <div>
                                     <h4>Vessel Settings:</h4>
                                     <div>
@@ -308,7 +324,7 @@ const App = () => {
                         }
                         {/* Button to generate PDF report of current weather conditions, only shown if weather and geocoding data are available */}
                         {weatherData && geoData && (
-                            <PdfReport weatherData={weatherData} geoData={geoData} darkMode={DModeFlag}/>
+                            <PdfReport weatherData={weatherData} geoData={geoData} darkMode={DModeFlag} tempUnitFlag={TempUnitFlag}/>
                         )}
                         <>
                             {/*forecast metric buttons displayed in a grid*/}
@@ -319,9 +335,9 @@ const App = () => {
                                 <ForecastButton
                                     
                                     safetynum={0}
-                                    numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
-                                    units={"°C"}
-                                    text={"Feels like: " + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
+                                    numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + toTemp(weatherData.forecast.current[2][1]) : "N/A"}
+                                    units={tempUnit}
+                                    text={"Feels like: " + (weatherData ? toTemp(weatherData.forecast.current[7][1]) : "N/A") + tempUnit }
                                     click={() =>setModalClick("Temperature")}
                                     darkMode={DModeFlag}
                                 />
@@ -405,8 +421,8 @@ const App = () => {
                                 {/*sea surface temperature button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("seaTemp", parseFloat(weatherData ? weatherData.marine.current[5][1] : 0))}
-                                    numval={weatherData ? weatherData.marine.current[5][1] : "N/A"}
-                                    units={"°C"}
+                                    numval={weatherData ? toTemp(weatherData.marine.current[5][1]) : "N/A"}
+                                    units={tempUnit}
                                     text={"Sea Surface Temperature"}
                                     click={() =>setModalClick("Sea Surface Temperature")}
                                     darkMode={DModeFlag}
@@ -466,7 +482,7 @@ const App = () => {
                                         <div className={DModeFlag ? 'modal-body text-light' : 'modal-body text-dark'}>
                                             {/*render foreccast modal depending on which forecast button was clicked, only if weather and geocoding data are available*/}
                                             {weatherData && geoData && 
-                                                <ForecastModal wData={weatherData} modalClick={modalClick} darkMode={DModeFlag}/>
+                                                <ForecastModal wData={weatherData} modalClick={modalClick} darkMode={DModeFlag} tempUnitFlag={TempUnitFlag}/>
                                             }
                                         </div>
                                     </div>

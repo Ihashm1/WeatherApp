@@ -116,8 +116,10 @@ const chartToDataUrl = (labels, values, title) => {
     return url
 }
 
-const PdfReport = ({ weatherData, geoData, darkMode}) => {
+const PdfReport = ({ weatherData, geoData, darkMode, tempUnitFlag }) => {
     const marineAvailable = weatherData?.marine?.current[2][1] != null
+    const toTemp = (c) => tempUnitFlag ? Math.round((parseFloat(c) * 9/5 + 32) * 10) / 10 : c
+    const tUnit = tempUnitFlag ? '°F' : '°C'
 
     const defaultKeys = ALL_METRICS
         .filter(m => !m.marine || marineAvailable)
@@ -165,8 +167,13 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                 if (!metric) continue
                 if (y > 245) { doc.addPage(); y = 20 }
 
-                const cur = getCurrentVal(weatherData, key)
-                const hourly = getHourlyData(weatherData, key)
+                const cur = key === 'Temperature' ? toTemp(getCurrentVal(weatherData, key))
+                           : key === 'Sea Surface Temperature' ? toTemp(getCurrentVal(weatherData, key))
+                           : getCurrentVal(weatherData, key)
+                const rawHourly = getHourlyData(weatherData, key)
+                const hourly = (rawHourly && (key === 'Temperature' || key === 'Sea Surface Temperature'))
+                    ? { labels: rawHourly.labels, vals: rawHourly.vals.map(v => toTemp(v)) }
+                    : rawHourly
 
                 doc.setFontSize(13)
                 doc.setTextColor(50, 60, 140)
@@ -179,7 +186,8 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                     if (metric.textOnly) {
                         doc.text(String(cur), margin, y)
                     } else {
-                        doc.text(`Current: ${cur} ${metric.unit}`, margin, y)
+                        const unit = (key === 'Temperature' || key === 'Sea Surface Temperature') ? tUnit : metric.unit
+                        doc.text(`Current: ${cur} ${unit}`, margin, y)
                         if (key === 'Wind Speed' || key === 'Wind Gusts') {
                             const bft = toBft(parseFloat(cur))
                             doc.setTextColor(100, 100, 100)
