@@ -2,6 +2,18 @@ import { useState } from 'react'
 import Chart from 'chart.js/auto'
 import { jsPDF } from 'jspdf'
 
+const BEAUFORT_NAMES = ['Calm','Light air','Light breeze','Gentle breeze','Moderate breeze',
+    'Fresh breeze','Strong breeze','Near gale','Gale','Severe gale','Storm','Violent storm','Hurricane']
+const BEAUFORT_MAX = [1, 5, 11, 19, 28, 38, 49, 61, 74, 88, 102, 117, Infinity]
+const toBft = (mph) => { for (let i = 0; i < BEAUFORT_MAX.length; i++) { if (mph < BEAUFORT_MAX[i]) return i } return 12 }
+
+const degreesToCardinal = (deg) => {
+    const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']
+    return dirs[Math.round((deg % 360) / 22.5) % 16]
+}
+
+const fmtTime = (iso) => iso ? iso.slice(11, 16) : '--:--'
+
 const ALL_METRICS = [
     { key: 'Temperature',           unit: '°C',  marine: false },
     { key: 'Precipitation',         unit: 'mm',  marine: false },
@@ -13,6 +25,10 @@ const ALL_METRICS = [
     { key: 'Swell Period',         unit: 's',   marine: true  },
     { key: 'Sea Surface Temperature',     unit: '°C',  marine: true  },
     { key: 'Sea Level Height',     unit: 'm',   marine: true  },
+    { key: 'Wind Direction',       unit: '°',   marine: false, textOnly: true },
+    { key: 'Wave Direction',       unit: '°',   marine: true,  textOnly: true },
+    { key: 'Swell Direction',      unit: '°',   marine: true,  textOnly: true },
+    { key: 'Sunrise / Sunset',     unit: '',    marine: false, textOnly: true },
 ]
 
 const getHourlyData = (wData, key) => {
@@ -59,6 +75,10 @@ const getCurrentVal = (wData, key) => {
         case 'Swell Period':     return m.current[9]?.[1] ?? 'N/A'
         case 'Sea Surface Temp': return m.current[5][1]
         case 'Sea Level Height': return m.current[4][1]
+        case 'Wind Direction':  { const d = f.current[5][1]; return `${d}° (${degreesToCardinal(d)})` }
+        case 'Wave Direction':  { const d = m.current[3][1]; return `${d}° (${degreesToCardinal(d)})` }
+        case 'Swell Direction': { const d = m.current[6][1]; return `${d}° (${degreesToCardinal(d)})` }
+        case 'Sunrise / Sunset': return `Sunrise ${fmtTime(f.daily[4][1]?.[0])}  /  Sunset ${fmtTime(f.daily[9]?.[1]?.[0])}`
         default:                  return null
     }
 }
@@ -156,11 +176,21 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                 doc.setFontSize(10)
                 doc.setTextColor(40, 40, 40)
                 if (cur !== null && cur !== undefined) {
-                    doc.text(`Current: ${cur} ${metric.unit}`, margin, y)
+                    if (metric.textOnly) {
+                        doc.text(String(cur), margin, y)
+                    } else {
+                        doc.text(`Current: ${cur} ${metric.unit}`, margin, y)
+                        if (key === 'Wind Speed' || key === 'Wind Gusts') {
+                            const bft = toBft(parseFloat(cur))
+                            doc.setTextColor(100, 100, 100)
+                            doc.text(`  Beaufort ${bft} — ${BEAUFORT_NAMES[bft]}`, margin + 52, y)
+                            doc.setTextColor(40, 40, 40)
+                        }
+                    }
                     y += 5
                 }
 
-                if (hourly) {
+                if (!metric.textOnly && !metric.textOnly && hourly) {
                     const imgData = chartToDataUrl(hourly.labels, hourly.vals, key)
                     const imgW = pw - margin * 2
                     const imgH = imgW * (220 / 700)
