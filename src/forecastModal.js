@@ -24,7 +24,9 @@ import FutureWeather from "./futureWeather"
 // [0]=time [1]=wave_height [2]=sea_level_height_msl [3]=wave_direction [4]=swell_wave_height
 // [5]=swell_wave_direction [6]=sea_surface_temperature [7]=wave_period [8]=swell_wave_period
 
-const ForecastModal = ({ wData, modalClick, darkMode, tempUnitFlag }) => {
+
+// ForecastModal component that displays detailed weather information based on the selected modal click
+const ForecastModal = ({ wData, modalClick, darkMode }) => {
     if (!wData || !modalClick) return null;
 
     const f = wData.forecast;
@@ -33,6 +35,9 @@ const ForecastModal = ({ wData, modalClick, darkMode, tempUnitFlag }) => {
     const tUnit = tempUnitFlag ? '°F' : '°C';
     const convertArr = (arr) => arr ? arr.map(v => v == null ? null : toTemp(v)) : arr;
 
+
+    
+    //atmospheric forecasts
     if (modalClick === "Temperature") return (
         <FutureWeather
             currentVal={toTemp(f.current[2][1])}
@@ -59,6 +64,8 @@ const ForecastModal = ({ wData, modalClick, darkMode, tempUnitFlag }) => {
             darkMode={darkMode}
         />
     );
+
+    //wind forecasts for speed in mph kn, wind direction and gusts in mph and kn
     if (modalClick === "Wind Speed(mph)") return (
         <FutureWeather
             currentVal={f.current[4][1]}
@@ -124,6 +131,8 @@ const ForecastModal = ({ wData, modalClick, darkMode, tempUnitFlag }) => {
             darkMode={darkMode}
         />
     );
+
+    //marine forecasts
     if (modalClick === "Wave Height") return (
         <FutureWeather
             currentVal={m.current[2][1]}

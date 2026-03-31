@@ -1,11 +1,14 @@
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 
+//line chart component using Chart.js, takes in labels, values, name, and units as props
 export default function LineChart({ labels, values, name, units }) {
     const canvasRef = useRef();
     const chartRef = useRef(null);
 
     useEffect(() => {
+
+        //destroy previous chart instance if it exists before creating a new one
         if (chartRef.current) chartRef.current.destroy();
         chartRef.current = new Chart(canvasRef.current, {
             type: "line",
@@ -38,6 +41,7 @@ export default function LineChart({ labels, values, name, units }) {
                 }
             }
         });
+        // function to destroy chart instance on unmount or when labels or values change
         return () => { if (chartRef.current) chartRef.current.destroy(); };
     }, [labels, values]);
 

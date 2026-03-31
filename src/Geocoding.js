@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
+// Geocoding component that allows users to search for a location and get its coordinates
 const Geocoding = (props) => {
+
+    // State variables for location input, location data, array of locations, input focus, placeholder text, and user location
     const [location, setLocation] = useState('');
     const [locationData, setLocationData] = useState(null);
     const [locationsArr, setLocationsArr] = useState(null);
@@ -11,6 +15,7 @@ const Geocoding = (props) => {
 
     const [userLocation, setUserLocation] = useState(null);
 
+    // Function to fetch geocoding data from the API based on the location input
     const fetchData = async () => {
         if (!location){return;}
         try{
@@ -30,6 +35,7 @@ const Geocoding = (props) => {
         }
     };
 
+    // useEffect to fetch data when the component mounts or when the location input changes
     useEffect(() => {
         if(location === ''){
             return
@@ -37,6 +43,7 @@ const Geocoding = (props) => {
         fetchData();
     }, []);
 
+    // Handler functions for input change, form submission, location selection, input focus, input blur, and getting user location
     const handleInputChange = (e) => {
         setLocation(e.target.value);
         e.preventDefault();
@@ -94,8 +101,10 @@ const Geocoding = (props) => {
         <div className="" id="geocoding">
             {
             <form onSubmit={handleSubmit} className="mb-2">
+                {/*input group for location search with a button to get the users current location*/}
                 <div className="row p-0 m-0 no-gutters justify-content-center">
                     <div className="col p-0" 
+
                         onMouseEnter={handleInputFocus}
                         onMouseLeave={handleInputBlur}
                         onTouchStart={handleInputFocus}
@@ -108,6 +117,8 @@ const Geocoding = (props) => {
                                 className={props.darkMode ? "btn btn-dark border border-dark-emphasis rounded-start-pill" : "btn btn-light border border-light-emphasis rounded-start-pill"}
                                 onClick={getUserLocation}
                             >📍</button>
+
+                            {/* Input field for location search */}
                             <input 
                                 type='text' 
                                 placeholder={placeholder}
@@ -121,6 +132,8 @@ const Geocoding = (props) => {
                     </div>
                     
                 </div>
+
+                {/*autocomplete dropdon for location search results*/}
                 <div className="row w-100 p-0 m-0 no-gutters">
                     {locationsArr && inputFocused &&(
                     <>
