@@ -348,10 +348,10 @@ const App = () => {
                                 {/*wind direction button*/}
                                 <ForecastButton
                                     safetynum={0}
-                                    // this needs to be an arrow graphic
                                     numval={weatherData ? weatherData.forecast.current[5][1] : "N/A"}
                                     units={"°"}
                                     text={"Wind Direction"}
+                                    direction={weatherData ? weatherData.forecast.current[5][1] : null}
                                     click={() =>setModalClick("Wind Direction")}
                                     darkMode={DModeFlag}
                                 />
@@ -386,6 +386,7 @@ const App = () => {
                                     numval={weatherData ? weatherData.marine.current[3][1] : "N/A"}
                                     units={"°"}
                                     text={"Wave Direction"}
+                                    direction={weatherData ? weatherData.marine.current[3][1] : null}
                                     click={() =>setModalClick("Wave Direction")}
                                     darkMode={DModeFlag}
                                 />
@@ -416,6 +417,7 @@ const App = () => {
                                     numval={weatherData ? weatherData.marine.current[6][1] : "N/A"}
                                     units={"°"}
                                     text={"Swell Direction"}
+                                    direction={weatherData ? weatherData.marine.current[6][1] : null}
                                     click={() =>setModalClick("Swell Direction")}
                                     darkMode={DModeFlag}
                                 />

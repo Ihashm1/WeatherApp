@@ -6,13 +6,13 @@ const safety = ["rgba(186, 250, 255, 1)",
                 "rgba(255, 241, 183,1)", 
                 "rgba(255, 185, 164,1)"];
 
-// Muted equivalents for dark mode — same 4-level index, darker so text is readable
+// Muteyd equivalents for dark mode — same 4-level index, darker so text is readable
 const safetyDark = ["rgb(110, 164, 168)", 
                     "rgb(129, 168, 113)", 
                     "rgb(181, 166, 115)", 
                     "rgb(165, 110, 93)"];
 
-const ForecastButton = ({safetynum, numval, units, text, click, darkMode}) => {
+const ForecastButton = ({safetynum, numval, units, text, click, darkMode, direction}) => {
   
   const bgColour = darkMode ? (safetyDark[safetynum]) : (safety[safetynum])
   return( 
@@ -28,9 +28,16 @@ const ForecastButton = ({safetynum, numval, units, text, click, darkMode}) => {
       data-bs-toggle="modal" 
       data-bs-target="#fModal"
       >
-        <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1">
-            <h1 className="col mx-auto fw-semibold">{numval}{units}</h1>
-            <h5 className="col mx-auto">{text}</h5>
+        <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'100%', height:'100%', color: darkMode ? "white" : "inherit", gap:'2px', padding:'6px'}}>
+            <h1 className="fw-semibold m-0">{numval}{units}</h1>
+            {direction != null && (
+              <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
+                <svg width="44" height="44" viewBox="0 0 24 24" style={{transform:`rotate(${direction}deg)`, transformOrigin:'center', display:'block'}}>
+                  <path d="M12,7 L6,18 L12,15 L18,18 Z" fill="currentColor" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            )}
+            <h5 className="m-0">{text}</h5>
         </div>
     </button>
   );
