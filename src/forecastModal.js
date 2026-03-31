@@ -56,7 +56,7 @@ const ForecastModal = ({ wData, modalClick, darkMode }) => {
             darkMode={darkMode}
         />
     );
-    if (modalClick === "Wind Speed") return (
+    if (modalClick === "Wind Speed(mph)") return (
         <FutureWeather
             currentVal={f.current[4][1]}
             currentLabel={"Gusts: " + f.current[6][1] + " mph"}
@@ -66,6 +66,19 @@ const ForecastModal = ({ wData, modalClick, darkMode }) => {
             HourlyTimeArr={f.hourly[0][1]}
             HourlyValArr={f.hourly[3][1]}
             units="mph"
+            darkMode={darkMode}
+        />
+    );
+    if (modalClick === "Wind Speed(kn)") return (
+        <FutureWeather
+            currentVal={f.current[4][1]}
+            currentLabel={"Gusts: " + f.current[6][1] + " kn"}
+            DailyTimeArr={f.daily[0][1]}
+            DailyValArr={f.daily[5][1]}
+            DailyIconArr={f.daily[7][1]}
+            HourlyTimeArr={f.hourly[0][1]}
+            HourlyValArr={f.hourly[3][1]}
+            units="kn"
             darkMode={darkMode}
         />
     );
@@ -82,7 +95,7 @@ const ForecastModal = ({ wData, modalClick, darkMode }) => {
             darkMode={darkMode}
         />
     );
-    if (modalClick === "Wind Gusts") return (
+    if (modalClick === "Wind Gusts(mph)") return (
         <FutureWeather
             currentVal={f.current[6][1]}
             currentLabel={"Wind Gusts"}
@@ -92,6 +105,19 @@ const ForecastModal = ({ wData, modalClick, darkMode }) => {
             HourlyTimeArr={f.hourly[0][1]}
             HourlyValArr={f.hourly[8][1]}
             units="mph"
+            darkMode={darkMode}
+        />
+    );
+    if (modalClick === "Wind Gusts(kn)") return (
+        <FutureWeather
+            currentVal={f.current[6][1]}
+            currentLabel={"Wind Gusts"}
+            DailyTimeArr={f.daily[0][1]}
+            DailyValArr={f.daily[5][1]}
+            DailyIconArr={f.daily[7][1]}
+            HourlyTimeArr={f.hourly[0][1]}
+            HourlyValArr={f.hourly[8][1]}
+            units="kn"
             darkMode={darkMode}
         />
     );

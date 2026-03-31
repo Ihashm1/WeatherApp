@@ -212,6 +212,7 @@ const AppInner = () => {
                         sendData={setWeatherData}
                         latitude={geoData.latitude}
                         longitude={geoData.longitude}
+                        unitflag={WindUnitFlag}
                     />
                     </>
                 )}
@@ -228,7 +229,20 @@ const AppInner = () => {
                                 <label className="form-check-label" htmlFor="DarkmodeSwitchCheck">Dark Mode</label>
                             </div>
                             <div>
-                                <h4>Vessel Settings:</h4>
+                                <h4>Wind Speed Units:</h4>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setWindUnitFlag(false)} defaultChecked></input>
+                                    <label className="form-check-label" htmlFor="WindUnitRadios1">
+                                        MPH
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setWindUnitFlag(true)}></input>
+                                    <label className="form-check-label" htmlFor="WindUnitRadios2">
+                                        Knots
+                                    </label>
+                                </div>
+                        
                                 <div>
                                     <p>Boat length: (metres)</p>
                                     <input
@@ -326,6 +340,14 @@ const AppInner = () => {
                                     darkMode={DModeFlag}
                                 />
 
+                                <ForecastButton
+                                    safetynum={safetyLookup("windSpeed", parseFloat(weatherData ? weatherData.forecast.current[4][1] : 0))}
+                                    numval={weatherData ? weatherData.forecast.current[4][1] : "N/A"}
+                                    units={WindUnitFlag?"kn":"mph"}
+                                    text={"Wind Speed"}
+                                    click={() =>WindUnitFlag?setModalClick("Wind Speed(kn)"):setModalClick("Wind Speed(mph)")}
+                                    darkMode={DModeFlag}
+                                />
                                 {/* Sunrise / Sunset standalone card — display only, no modal */}
                                 <SunriseSunsetCard
                                     sunrise={weatherData.forecast.daily[4][1]?.[0]}
