@@ -2,18 +2,23 @@ import { useState } from 'react'
 import Chart from 'chart.js/auto'
 import { jsPDF } from 'jspdf'
 
+
+//scale of wind force with associated names, and a function to convert mph to beaufort scale
 const BEAUFORT_NAMES = ['Calm','Light air','Light breeze','Gentle breeze','Moderate breeze',
     'Fresh breeze','Strong breeze','Near gale','Gale','Severe gale','Storm','Violent storm','Hurricane']
 const BEAUFORT_MAX = [1, 5, 11, 19, 28, 38, 49, 61, 74, 88, 102, 117, Infinity]
 const toBft = (mph) => { for (let i = 0; i < BEAUFORT_MAX.length; i++) { if (mph < BEAUFORT_MAX[i]) return i } return 12 }
 
+//convert degrees to cardinal direction
 const degreesToCardinal = (deg) => {
     const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']
     return dirs[Math.round((deg % 360) / 22.5) % 16]
 }
 
+// Helper function to format ISO time strings
 const fmtTime = (iso) => iso ? iso.slice(11, 16) : '--:--'
 
+// List of all available metrics with their units and whether they are marine-specific
 const ALL_METRICS = [
     { key: 'Temperature',           unit: '°C',  marine: false },
     { key: 'Precipitation',         unit: 'mm',  marine: false },
@@ -31,11 +36,13 @@ const ALL_METRICS = [
     { key: 'Sunrise / Sunset',     unit: '',    marine: false, textOnly: true },
 ]
 
+// Function to extract hourly data for a given metric key from the weather data
 const getHourlyData = (wData, key) => {
     const f = wData.forecast
     const m = wData.marine
     const now = new Date()
 
+    //  function to slice the time and value arrays for the next 24 hours starting from the current time
     const slice = (timeArr, valArr) => {
         let i = timeArr.findIndex(t => new Date(t) >= now)
         if (i < 0) i = 0
@@ -46,6 +53,7 @@ const getHourlyData = (wData, key) => {
         return { labels, vals }
     }
 
+    //switch statement to determine which data arrays to slice based on the metric key
     switch (key) {
         case 'Temperature':       return slice(f.hourly[0][1], f.hourly[1][1])
         case 'Precipitation':     return slice(f.hourly[0][1], f.hourly[7][1])
@@ -61,6 +69,7 @@ const getHourlyData = (wData, key) => {
     }
 }
 
+// Function to get the current value of a given metric key from the weather data
 const getCurrentVal = (wData, key) => {
     const f = wData.forecast
     const m = wData.marine
@@ -83,6 +92,7 @@ const getCurrentVal = (wData, key) => {
     }
 }
 
+// function to create a line chart and return it as a data URL for embedding in the PDF
 const chartToDataUrl = (labels, values, title) => {
     const canvas = document.createElement('canvas')
     canvas.width = 700
@@ -116,25 +126,34 @@ const chartToDataUrl = (labels, values, title) => {
     return url
 }
 
+// main component for generating and downloading the pdf report based on the weather data and the selected metrics
 const PdfReport = ({ weatherData, geoData, darkMode}) => {
+
+    // Check if marine data is available to determine which metrics can be included in the report
     const marineAvailable = weatherData?.marine?.current[2][1] != null
 
+    // set default selected metrics based on availability of the marine data
     const defaultKeys = ALL_METRICS
         .filter(m => !m.marine || marineAvailable)
         .map(m => m.key)
 
+    // State variables to manage the visibility of the metric selection the selected metrics, and the generation status of the PDF
     const [open, setOpen] = useState(false)
     const [selected, setSelected] = useState(defaultKeys)
     const [generating, setGenerating] = useState(false)
 
+    //toggle function to add or remove a metric from the selected list when the user clicks on the checkbox
     const toggle = (key) =>
         setSelected(prev =>
             prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
         )
 
+
+    //select all and clear all functions to quickly select or deselect all metrics
     const selectAll = () => setSelected(ALL_METRICS.filter(m => !m.marine || marineAvailable).map(m => m.key))
     const clearAll  = () => setSelected([])
 
+    //  handles the PDF generation and downloading when the user clicks the download button
     const handleDownload = async () => {
         if (!weatherData || selected.length === 0) return
         setGenerating(true)
@@ -143,6 +162,7 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
             const pw = doc.internal.pageSize.getWidth()
             const margin = 14
 
+            //header
             doc.setFontSize(20)
             doc.setTextColor(50, 60, 140)
             doc.text('Sailor Weather Report', margin, 20)
@@ -160,6 +180,7 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
 
             let y = 43
 
+            //metrics  
             for (const key of selected) {
                 const metric = ALL_METRICS.find(m => m.key === key)
                 if (!metric) continue
@@ -168,6 +189,7 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                 const cur = getCurrentVal(weatherData, key)
                 const hourly = getHourlyData(weatherData, key)
 
+                //section header
                 doc.setFontSize(13)
                 doc.setTextColor(50, 60, 140)
                 doc.text(key, margin, y)
@@ -181,6 +203,8 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                     } else {
                         doc.text(`Current: ${cur} ${metric.unit}`, margin, y)
                         if (key === 'Wind Speed' || key === 'Wind Gusts') {
+
+                            //annotate with beaufort force
                             const bft = toBft(parseFloat(cur))
                             doc.setTextColor(100, 100, 100)
                             doc.text(`  Beaufort ${bft} — ${BEAUFORT_NAMES[bft]}`, margin + 52, y)
@@ -190,10 +214,13 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                     y += 5
                 }
 
+                //hourly chart for the metric if it's not text-only and if the data is available
                 if (!metric.textOnly && !metric.textOnly && hourly) {
                     const imgData = chartToDataUrl(hourly.labels, hourly.vals, key)
                     const imgW = pw - margin * 2
                     const imgH = imgW * (220 / 700)
+
+                    //add new page if overflow
                     if (y + imgH > 280) { doc.addPage(); y = 20 }
                     doc.addImage(imgData, 'PNG', margin, y, imgW, imgH)
                     y += imgH + 10
@@ -204,6 +231,7 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                 y += 6
             }
 
+            //create filename based on location and current date
             const filename = `weather-${geoData?.name ?? 'report'}-${new Date().toISOString().slice(0, 10)}.pdf`
             doc.save(filename.replace(/\s+/g, '-').toLowerCase())
         } catch (e) {
@@ -212,10 +240,12 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
         setGenerating(false)
     }
 
+    //metrics in the checkbox list
     const visible = ALL_METRICS.filter(m => !m.marine || marineAvailable)
 
     return (
         <div className="row mx-auto">
+            {/* Button to toggle the visibility of the metric selection panel */}
             <button
                 className={darkMode ? "btn btn-dark mb-2 mx-auto col-12 col-md-2" : "btn btn-light mb-2 mx-auto col-12 col-md-2"}
                 onClick={() => setOpen(o => !o)}
@@ -224,6 +254,7 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                 Download PDF Report {open ? '▲' : '▼'}
             </button>
 
+            {/*options panel*/}
             {open && (
                 <div className={darkMode ? "card border-0 shadow mb-1 bg-dark text-white" : "card border-0 shadow mb-1 bg-light text-dark"}>
                     <div className="card-body">
@@ -231,6 +262,8 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                             <button className='btn btn-secondary btn-sm mx-1' onClick={selectAll}>Select All</button>
                             <button className='btn btn-secondary btn-sm mx-1' onClick={clearAll}>Select None</button>
                         </p>
+
+                        {/*chechbox list for metrics*/}
                         <div className="row row-cols-2 row-cols-md-3 g-1 mb-3">
                             {visible.map(m => (
                                 <div key={m.key} className="col">
@@ -249,6 +282,8 @@ const PdfReport = ({ weatherData, geoData, darkMode}) => {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Button to trigger PDF generation and download, disabled if no metrics are selected or if generation is in progress */}
                         <button
                             className={"btn btn-primary btn-sm"}
                             onClick={handleDownload}
