@@ -397,6 +397,7 @@ const App = () => {
                                     numval={weatherData ? weatherData.marine.current[4][1] : "N/A"}
                                     units={"m"}
                                     text={"Sea Level Height"}
+                                    sparkline={weatherData ? (() => { const times = weatherData.marine.hourly[0][1]; const vals = weatherData.marine.hourly[2][1]; const now = new Date(); let i = times.findIndex(t => new Date(t) >= now); if (i < 0) i = 0; return vals.slice(i, i + 24); })() : null}
                                     click={() =>setModalClick("Sea Level Height")}
                                     darkMode={DModeFlag}
                                 />
