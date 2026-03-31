@@ -11,6 +11,26 @@ const Geocoding = (props) => {
 
     const [userLocation, setUserLocation] = useState(null);
 
+    const [recentLocations, setRecentLocations] = useState([]);
+
+    // Load from localStorage on mount
+    useEffect(() => {
+        try {
+            const stored = JSON.parse(localStorage.getItem('recentLocations'));
+            if (Array.isArray(stored)) setRecentLocations(stored);
+        } catch {}
+    }, []);
+
+    const saveRecentLocation = (loc) => {
+        setRecentLocations(prev => {
+            const filtered = prev.filter(r => r.id !== loc.id);
+            const updated = [loc, ...filtered].slice(0, 3);
+            // Save to localStorage after state update
+            setTimeout(() => localStorage.setItem('recentLocations', JSON.stringify(updated)), 0);
+            return updated;
+        });
+    };
+
     const fetchData = async () => {
         if (!location){return;}
         try{
@@ -48,10 +68,31 @@ const Geocoding = (props) => {
     };
 
     const handleClick = (index) => {
-        setPlaceholder(locationsArr[index].name + ", " + locationsArr[index].admin1 + ", " + locationsArr[index].country)
-        setLocation(locationsArr[index].name + ", " + locationsArr[index].admin1 + ", " + locationsArr[index].country);
-        setLocationData(locationsArr[index]);
-        props.sendData(locationsArr[index]);
+        const chosen = locationsArr[index];
+        setPlaceholder(chosen.name + ", " + chosen.admin1 + ", " + chosen.country);
+        setLocation(chosen.name + ", " + chosen.admin1 + ", " + chosen.country);
+        setLocationData(chosen);
+        props.sendData(chosen);
+        saveRecentLocation(chosen);
+        setLocationsArr(null);
+        setInputFocused(false);
+    };
+
+    const removeRecentLocation = (id, e) => {
+        e.stopPropagation();
+        setRecentLocations(prev => {
+            const updated = prev.filter(r => r.id !== id);
+            setTimeout(() => localStorage.setItem('recentLocations', JSON.stringify(updated)), 0);
+            return updated;
+        });
+    };
+
+    const handleRecentClick = (loc) => {
+        setPlaceholder(loc.name + ", " + loc.admin1 + ", " + loc.country);
+        setLocation(loc.name + ", " + loc.admin1 + ", " + loc.country);
+        setLocationData(loc);
+        props.sendData(loc);
+        saveRecentLocation(loc);
         setLocationsArr(null);
         setInputFocused(false);
     };
@@ -138,10 +179,42 @@ const Geocoding = (props) => {
                             ))}
                         </div>
                     </div>
-                    
                     </>
                     )}
                 </div>
+
+                {recentLocations.length > 0 && (
+                    <div className="row w-100 p-0 m-0 mt-1 no-gutters">
+                        <div className="col p-0 m-0">
+                            <div className="d-flex flex-wrap gap-1">
+                                {recentLocations.map((loc) => (
+                                    <button
+                                        key={loc.id}
+                                        type="button"
+                                        onClick={() => handleRecentClick(loc)}
+                                        onMouseEnter={handleInputFocus}
+                                        onMouseLeave={handleInputBlur}
+                                        className={props.darkMode ? "btn btn-dark rounded-pill d-flex align-items-center gap-2 px-3 py-2" : "btn btn-light rounded-pill d-flex align-items-center gap-2 px-3 py-2"}
+                                        style={{fontSize:"1.05rem", minHeight:"2.3rem"}}
+                                    >
+                                         {loc.name}, {loc.admin1}
+                                        <span
+                                            onClick={(e) => removeRecentLocation(loc.id, e)}
+                                            onMouseEnter={handleInputFocus}
+                                            onMouseLeave={handleInputBlur}
+                                            style={{
+                                                display:"inline-flex", alignItems:"center", justifyContent:"center",
+                                                width:"22px", height:"22px", borderRadius:"50%",
+                                                backgroundColor: props.darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)",
+                                                fontSize:"1rem", lineHeight:1, cursor:"pointer", flexShrink:0
+                                            }}
+                                        >✕</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
                 
             </form>
             }
