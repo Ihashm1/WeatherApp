@@ -6,7 +6,7 @@ import FutureWeather from "./futureWeather"
 //
 // forecast.daily indices:
 // [0]=time [1]=temperature_2m_max [2]=apparent_temperature_max [3]=daylight_duration
-// [4]=sunrise [5]=wind_speed_10m_max [6]=wind_direction_10m_dominant [7]=weather_code [8]=precipitation_sum
+// [4]=sunrise [5]=wind_speed_10m_max [6]=wind_direction_10m_dominant [7]=weather_code [8]=precipitation_sum [9]=sunset
 //
 // forecast.hourly indices:
 // [0]=time [1]=temperature_2m [2]=visibility [3]=wind_speed_10m [4]=apparent_temperature
