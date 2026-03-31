@@ -28,10 +28,6 @@ const ForecastButton = ({safetynum, numval, units, text, click, darkMode, direct
       data-bs-toggle="modal" 
       data-bs-target="#fModal"
       >
-        <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1">
-            {text.includes("Direction")?<img className="col mx-auto" style={{transform: `rotate(${numval}deg)`, width: 80,
-  height: 80}} src={arrow}></img>:<h1 className="col mx-auto fw-semibold">{numval}{units}</h1>}
-            <h5 className="col mx-auto">{text}</h5>
         <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', width:'100%', height:'100%', color: darkMode ? "white" : "inherit", gap:'2px', padding:'6px'}}>
             <h1 className="fw-semibold m-0">{numval}{units}</h1>
             {sparkline != null && sparkline.length > 1 && (() => {

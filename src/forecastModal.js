@@ -26,7 +26,7 @@ import FutureWeather from "./futureWeather"
 
 
 // ForecastModal component that displays detailed weather information based on the selected modal click
-const ForecastModal = ({ wData, modalClick, darkMode }) => {
+const ForecastModal = ({ wData, modalClick, darkMode, tempUnitFlag }) => {
     if (!wData || !modalClick) return null;
 
     const f = wData.forecast;

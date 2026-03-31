@@ -127,7 +127,7 @@ const chartToDataUrl = (labels, values, title) => {
 }
 
 // main component for generating and downloading the pdf report based on the weather data and the selected metrics
-const PdfReport = ({ weatherData, geoData, darkMode}) => {
+const PdfReport = ({ weatherData, geoData, darkMode, tempUnitFlag }) => {
 
     // Check if marine data is available to determine which metrics can be included in the report
     const marineAvailable = weatherData?.marine?.current[2][1] != null
