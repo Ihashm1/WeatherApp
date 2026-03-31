@@ -1,4 +1,4 @@
-import React from 'react';
+import arrow from './images/BlackArrow.png';
 
 // Background colours indexed by safety level (0=none/neutral, 1=safe, 2=caution, 3=danger) — light mode
 const safety = ["rgba(186, 250, 255, 1)", 
@@ -29,7 +29,8 @@ const ForecastButton = ({safetynum, numval, units, text, click, darkMode}) => {
       data-bs-target="#fModal"
       >
         <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1">
-            <h1 className="col mx-auto fw-semibold">{numval}{units}</h1>
+            {text.includes("Direction")?<img className="col mx-auto" style={{transform: `rotate(${numval}deg)`, width: 80,
+  height: 80}} src={arrow}></img>:<h1 className="col mx-auto fw-semibold">{numval}{units}</h1>}
             <h5 className="col mx-auto">{text}</h5>
         </div>
     </button>
