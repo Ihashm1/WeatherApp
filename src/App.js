@@ -228,52 +228,56 @@ const AppInner = () => {
                                 <label className="form-check-label" htmlFor="DarkmodeSwitchCheck">Dark Mode</label>
                             </div>
                             <div>
-                                <h4>Vessel Settings:</h4>
-                                <div>
-                                    <p>Boat length: (metres)</p>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        style={DModeFlag ? {backgroundColor:'black', color:'white', borderColor:'#555'} : {}}
-                                        placeholder="0"
-                                        value={boatLength}
-                                        onChange={(e) => setBoatLength(e.target.value)}
-                                    />
-                                    <p className="mt-2">Freeboard Height: (metres)</p>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        style={DModeFlag ? {backgroundColor:'black', color:'white', borderColor:'#555'} : {}}
-                                        placeholder="0"
-                                        value={freeboard}
-                                        onChange={(e) => setFreeboard(e.target.value)}
-                                    />
+                                <h4>Wind Speed Units:</h4>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setWindUnitFlag(true)} defaultChecked></input>
+                                    <label className="form-check-label" htmlFor="WindUnitRadios1">
+                                        MPH
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setWindUnitFlag(false)}></input>
+                                    <label className="form-check-label" htmlFor="WindUnitRadios2">
+                                        Knots
+                                    </label>
                                 </div>
                             </div>
                             <div>
-                                <h5 className="mb-2">Units</h5>
-                                <div className="mb-2">
-                                    <label className="form-label fw-semibold">Temperature</label>
-                                    <div className="btn-group d-block">
-                                        <button className={`btn btn-sm ${tempUnit==='C' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setTempUnit('C')}>°C</button>
-                                        <button className={`btn btn-sm ${tempUnit==='F' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setTempUnit('F')}>°F</button>
-                                    </div>
+                                <h4>Boat Size:</h4>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios1" onClick={() => setBoatSizeFlag(true)} defaultChecked></input>
+                                    <label className="form-check-label" htmlFor="BoatSizeRadios1">
+                                        Passenger ship
+                                    </label>
                                 </div>
-                                <div className="mb-2">
-                                    <label className="form-label fw-semibold">Wind Speed</label>
-                                    <div className="btn-group d-block">
-                                        <button className={`btn btn-sm ${speedUnit==='mph' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setSpeedUnit('mph')}>mph</button>
-                                        <button className={`btn btn-sm ${speedUnit==='kph' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setSpeedUnit('kph')}>kph</button>
-                                        <button className={`btn btn-sm ${speedUnit==='kts' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setSpeedUnit('kts')}>kts</button>
-                                    </div>
+                                <div className="form-check">
+                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios2" onClick={() => setBoatSizeFlag(false)}></input>
+                                    <label className="form-check-label" htmlFor="BoatSizeRadios2">
+                                        Cargo ship
+                                    </label>
                                 </div>
-                                <div className="mb-2">
-                                    <label className="form-label fw-semibold">Height / Distance</label>
-                                    <div className="btn-group d-block">
-                                        <button className={`btn btn-sm ${heightUnit==='m' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setHeightUnit('m')}>m</button>
-                                        <button className={`btn btn-sm ${heightUnit==='ft' ? 'btn-primary' : 'btn-outline-secondary'}`} onClick={() => setHeightUnit('ft')}>ft</button>
-                                    </div>
+                            <div>
+                                <h4>Vessel Settings:</h4>
+                                <div>
+                                  <p> Boat length: (metres)</p>
+                                  <input
+                                    type="number"
+                                    placeholder = "0"
+                                    value = {boatLength}
+                                    onChange={(e) => setBoatLength(e.target.value)}
+                                    />
+
+                                    <p>Freeboard Height: (metres)</p>
+                                        <input
+                                        type ="number"
+                                        placeholder = "0"
+                                        value={freeboard}
+                                        onChange={(e) => setFreeboard(e.target.value)}
+                                        />
+
                                 </div>
+
+                            </div>
                             </div>
                         </div>
                     </div>
