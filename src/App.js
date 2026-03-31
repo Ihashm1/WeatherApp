@@ -332,6 +332,7 @@ const AppInner = () => {
                                     sunrise={weatherData.forecast.daily[4][1]?.[0]}
                                     sunset={weatherData.forecast.daily[9]?.[1]?.[0]}
                                     bgColor="rgba(186,250,255,1)"
+                                    darkMode={DModeFlag}
                                 />
 
                                 {/* Wind Speed with Beaufort gauge */}
@@ -344,10 +345,10 @@ const AppInner = () => {
                                 >
                                     <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
                                         <div className="col mx-auto">
-                                            <BeaufortGauge mph={parseFloat(weatherData.forecast.current[4][1])} size={65} />
+                                            <BeaufortGauge mph={parseFloat(weatherData.forecast.current[4][1])} size={55} />
                                             <span style={{fontSize:"0.8rem",fontWeight:800,display:"block",lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[4][1]))}</span>
                                         </div>
-                                        <h1 className="col mx-auto fw-semibold mb-0">{convertSpeed(weatherData.forecast.current[4][1])} {speedLabel()}</h1>
+                                        <h1 className="col mx-auto fw-semibold mb-0" style={{fontSize:"clamp(1rem,8vw,2rem)",whiteSpace:"nowrap"}}>{convertSpeed(weatherData.forecast.current[4][1])} {speedLabel()}</h1>
                                         <h5 className="col mx-auto">Wind Speed</h5>
                                     </div>
                                 </button>
@@ -376,10 +377,10 @@ const AppInner = () => {
                                 >
                                     <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
                                         <div className="col mx-auto">
-                                            <BeaufortGauge mph={parseFloat(weatherData.forecast.current[6][1])} size={65} />
+                                            <BeaufortGauge mph={parseFloat(weatherData.forecast.current[6][1])} size={55} />
                                             <span style={{fontSize:"0.8rem",fontWeight:800,display:"block",lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[6][1]))}</span>
                                         </div>
-                                        <h1 className="col mx-auto fw-semibold mb-0">{convertSpeed(weatherData.forecast.current[6][1])} {speedLabel()}</h1>
+                                        <h1 className="col mx-auto fw-semibold mb-0" style={{fontSize:"clamp(1rem,8vw,2rem)",whiteSpace:"nowrap"}}>{convertSpeed(weatherData.forecast.current[6][1])} {speedLabel()}</h1>
                                         <h5 className="col mx-auto">Wind Gusts</h5>
                                     </div>
                                 </button>

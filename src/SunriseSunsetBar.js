@@ -20,7 +20,7 @@ const MoonIcon = ({ size = 16, color = "#6366f1" }) => (
     </svg>
 );
 
-const SunriseSunsetCard = ({ sunrise, sunset, bgColor = "rgba(186,250,255,1)" }) => {
+const SunriseSunsetCard = ({ sunrise, sunset, bgColor = "rgba(186,250,255,1)", darkMode = false }) => {
     if (!sunrise || !sunset) return null;
 
     const now = new Date();
@@ -59,7 +59,7 @@ const SunriseSunsetCard = ({ sunrise, sunset, bgColor = "rgba(186,250,255,1)" })
             style={{
                 height: "40vw", width: "40vw",
                 maxWidth: "180px", maxHeight: "180px",
-                backgroundColor: bgColor,
+                backgroundColor: darkMode ? "rgb(110,164,168)" : bgColor,
                 borderRadius: "1.5rem",
                 boxShadow: "0 .125rem .25rem rgba(0,0,0,.075)",
                 overflow: "hidden",
@@ -70,13 +70,13 @@ const SunriseSunsetCard = ({ sunrise, sunset, bgColor = "rgba(186,250,255,1)" })
                 {/* header */}
                 <div className="d-flex align-items-center gap-1">
                     {primaryIcon}
-                    <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", color: "rgba(0,0,0,0.45)", textTransform: "uppercase" }}>
+                    <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", color: darkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.45)", textTransform: "uppercase" }}>
                         {primaryLabel}
                     </span>
                 </div>
 
                 {/* big time */}
-                <div style={{ fontSize: "1.4rem", fontWeight: 700, lineHeight: 1, color: "rgba(0,0,0,0.82)", paddingTop: "2px" }}>
+                <div style={{ fontSize: "1.4rem", fontWeight: 700, lineHeight: 1, color: darkMode ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.82)", paddingTop: "2px" }}>
                     {primaryTime}
                 </div>
 
@@ -110,7 +110,7 @@ const SunriseSunsetCard = ({ sunrise, sunset, bgColor = "rgba(186,250,255,1)" })
                 {/* secondary row */}
                 <div className="d-flex align-items-center gap-1">
                     {secondaryIcon}
-                    <span style={{ fontSize: "0.7rem", fontWeight: 600, color: "rgba(0,0,0,0.55)" }}>
+                    <span style={{ fontSize: "0.7rem", fontWeight: 600, color: darkMode ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)" }}>
                         {secondaryLabel}
                     </span>
                 </div>
