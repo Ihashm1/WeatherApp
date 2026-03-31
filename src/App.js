@@ -203,7 +203,7 @@ const AppInner = () => {
     }
     return (
         <>
-        <div className="container-fluid p-0 pb-5" style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)", backdropFilter:"blur(1px)"}}>
+        <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)"}}>
             <div className="p-3 pb-1">
                 <Geocoding sendData={setGeoData} darkMode={DModeFlag}/>
                     {geoData && (
@@ -212,6 +212,7 @@ const AppInner = () => {
                         sendData={setWeatherData}
                         latitude={geoData.latitude}
                         longitude={geoData.longitude}
+                        unitflag={WindUnitFlag}
                     />
                     </>
                 )}
@@ -230,13 +231,13 @@ const AppInner = () => {
                             <div>
                                 <h4>Wind Speed Units:</h4>
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setWindUnitFlag(true)} defaultChecked></input>
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setWindUnitFlag(false)} defaultChecked></input>
                                     <label className="form-check-label" htmlFor="WindUnitRadios1">
                                         MPH
                                     </label>
                                 </div>
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setWindUnitFlag(false)}></input>
+                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setWindUnitFlag(true)}></input>
                                     <label className="form-check-label" htmlFor="WindUnitRadios2">
                                         Knots
                                     </label>
@@ -330,58 +331,31 @@ const AppInner = () => {
                                     darkMode={DModeFlag}
                                 />
 
-                                {/* Sunrise / Sunset standalone card — display only, no modal */}
-                                <SunriseSunsetCard
-                                    sunrise={weatherData.forecast.daily[4][1]?.[0]}
-                                    sunset={weatherData.forecast.daily[9]?.[1]?.[0]}
-                                    bgColor="rgba(186,250,255,1)"
+                                <ForecastButton
+                                    safetynum={safetyLookup("windSpeed", parseFloat(weatherData ? weatherData.forecast.current[4][1] : 0))}
+                                    numval={weatherData ? weatherData.forecast.current[4][1] : "N/A"}
+                                    units={WindUnitFlag?"kn":"mph"}
+                                    text={"Wind Speed"}
+                                    click={() =>WindUnitFlag?setModalClick("Wind Speed(kn)"):setModalClick("Wind Speed(mph)")}
+                                    darkMode={DModeFlag}
                                 />
-
-                                {/* Wind Speed with Beaufort gauge */}
-                                <button
-                                    onClick={() => setModalClick("Wind Speed")}
-                                    style={{height:"40vw", width:"40vw", maxWidth:"180px", maxHeight:"180px",
-                                            backgroundColor: (DModeFlag ? ["rgb(110,164,168)","rgb(129,168,113)","rgb(181,166,115)","rgb(165,110,93)"] : ["rgba(186,250,255,1)","rgba(204,255,186,1)","rgba(255,241,183,1)","rgba(255,185,164,1)"])[safetyLookup("windSpeed", parseFloat(weatherData.forecast.current[4][1]))]}}
-                                    className="btn shadow-sm rounded-5 p-0"
-                                    type="button" data-bs-toggle="modal" data-bs-target="#fModal"
-                                >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px"}}>
-                                        <BeaufortGauge mph={parseFloat(weatherData.forecast.current[4][1])} size={86} />
-                                        <span style={{fontSize:"0.9rem",fontWeight:800,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[4][1]))}</span>
-                                        <span style={{fontSize:"0.9rem",fontWeight:700,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>{convertSpeed(weatherData.forecast.current[4][1])} {speedLabel()}</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wind Speed</small>
-                                    </div>
-                                </button>
-
-                                {/* Wind Direction */}
-                                <button
-                                    onClick={() => setModalClick("Wind Direction")}
-                                    style={{height:"40vw", width:"40vw", maxWidth:"180px", maxHeight:"180px", backgroundColor: DModeFlag ? "rgb(110,164,168)" : "rgba(186,250,255,1)"}}
-                                    className="btn shadow-sm rounded-5 p-0"
-                                    type="button" data-bs-toggle="modal" data-bs-target="#fModal"
-                                >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px",color: DModeFlag ? "white" : "inherit"}}>
-                                        <CompassRose degrees={weatherData.forecast.current[5][1]} size={76} />
-                                        <span className="fw-bold" style={{fontSize:"1rem",lineHeight:1}}>{weatherData.forecast.current[5][1]}°</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wind Direction</small>
-                                    </div>
-                                </button>
-
-                                {/* Wind Gusts with Beaufort gauge */}
-                                <button
-                                    onClick={() => setModalClick("Wind Gusts")}
-                                    style={{height:"40vw", width:"40vw", maxWidth:"180px", maxHeight:"180px",
-                                            backgroundColor: (DModeFlag ? ["rgb(110,164,168)","rgb(129,168,113)","rgb(181,166,115)","rgb(165,110,93)"] : ["rgba(186,250,255,1)","rgba(204,255,186,1)","rgba(255,241,183,1)","rgba(255,185,164,1)"])[safetyLookup("windGust", parseFloat(weatherData.forecast.current[6][1]))]}}
-                                    className="btn shadow-sm rounded-5 p-0"
-                                    type="button" data-bs-toggle="modal" data-bs-target="#fModal"
-                                >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px"}}>
-                                        <BeaufortGauge mph={parseFloat(weatherData.forecast.current[6][1])} size={86} />
-                                        <span style={{fontSize:"0.9rem",fontWeight:800,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[6][1]))}</span>
-                                        <span style={{fontSize:"0.9rem",fontWeight:700,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>{convertSpeed(weatherData.forecast.current[6][1])} {speedLabel()}</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wind Gusts</small>
-                                    </div>
-                                </button>
+                                <ForecastButton
+                                    safetynum={0}
+                                    // this needs to be an arrow graphic
+                                    numval={weatherData ? weatherData.forecast.current[5][1] : "N/A"}
+                                    units={"°"}
+                                    text={"Wind Direction"}
+                                    click={() =>setModalClick("Wind Direction")}
+                                    darkMode={DModeFlag}
+                                />
+                                <ForecastButton
+                                    safetynum={safetyLookup("windGust", parseFloat(weatherData ? weatherData.forecast.current[6][1] : 0))}
+                                    numval={weatherData ? weatherData.forecast.current[6][1] : "N/A"}
+                                    units={WindUnitFlag?"kn":"mph"}
+                                    text={"Wind Gusts"}
+                                    click={() =>WindUnitFlag?setModalClick("Wind Gusts(kn)"):setModalClick("Wind Gusts(mph)")}
+                                    darkMode={DModeFlag}
+                                />
                                 </>
                                 }
                                 {weatherData && weatherData.marine.current[2][1] &&
@@ -487,12 +461,11 @@ const AppInner = () => {
                             const level = result.level;
                             const reason = result.reasons.join(", ");
 
-                            const lightColours = ['rgba(186,250,255,1)', 'rgba(204,255,186,1)', 'rgba(255,241,183,1)', 'rgba(255,185,164,1)'];
-                            const darkColours  = ['rgb(50,90,110)', 'rgb(50,90,60)', 'rgb(100,80,30)', 'rgb(110,40,30)'];
-                            const colours = DModeFlag ? darkColours : lightColours;
+                            const colours  = ['rgba(186,250,255,1)', 'rgba(204,255,186,1)', 'rgba(255,241,183,1)', 'rgba(255,185,164,1)'];
+                            const coloursDark = ["rgb(110, 164, 168)", "rgb(129, 168, 113)", "rgb(181, 166, 115)", "rgb(165, 110, 93)"];
                             const messages = ['Set your vessel details in Settings for a sailing recommendation.', '✅ Good sailing conditions', '⚠️ Challenging, sail with care', '❗ Dangerous,  not recommended'];
                             return (
-                                <div style={{backgroundColor: colours[level], marginTop: '100px', color: DModeFlag ? 'white' : 'inherit'}} className="p-3 rounded-4 shadow-sm text-center">
+                                <div style={{backgroundColor: DModeFlag? coloursDark[level] : colours[level], marginTop: '100px'}} className="p-3 rounded-4 shadow-sm text-center text-dark">
                                     <h5>{messages[level]}</h5>
                                     {reason && <p className="mb-0">Due to: {reason}</p>}
                                 </div>
