@@ -59,6 +59,7 @@ const Geocoding = (props) => {
         setLocation(locationsArr[index].name + ", " + locationsArr[index].admin1 + ", " + locationsArr[index].country);
         setLocationData(locationsArr[index]);
         props.sendData(locationsArr[index]);
+        if (props.onSelect) props.onSelect(locationsArr[index]);
         setLocationsArr(null);
         setInputFocused(false);
     };
@@ -151,7 +152,6 @@ const Geocoding = (props) => {
                             ))}
                         </div>
                     </div>
-                    
                     </>
                     )}
                 </div>

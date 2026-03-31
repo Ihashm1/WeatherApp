@@ -36,6 +36,30 @@ const App = () => {
     const [DModeFlag, setDModeFlag] = useState(false);
     const [WindUnitFlag, setWindUnitFlag] = useState(false);
     const [BoatSizeFlag, setBoatSizeFlag] = useState(false);
+    const [TempUnitFlag, setTempUnitFlag] = useState(false); // false = °C, true = °F
+
+    const toTemp = (c) => TempUnitFlag ? Math.round((parseFloat(c) * 9/5 + 32) * 10) / 10 : c;
+    const tempUnit = TempUnitFlag ? '°F' : '°C';
+
+    const [recentSearches, setRecentSearches] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('recentSearches') || '[]'); }
+        catch { return []; }
+    });
+    const addRecentSearch = (item) => {
+        setRecentSearches(prev => {
+            const filtered = prev.filter(r => r.id !== item.id);
+            const updated = [item, ...filtered].slice(0, 3);
+            localStorage.setItem('recentSearches', JSON.stringify(updated));
+            return updated;
+        });
+    };
+    const removeRecentSearch = (id) => {
+        setRecentSearches(prev => {
+            const updated = prev.filter(r => r.id !== id);
+            localStorage.setItem('recentSearches', JSON.stringify(updated));
+            return updated;
+        });
+    };
 
     //vessel details set in settings
     const [boatLength, setBoatLength] = useState('');
@@ -214,7 +238,7 @@ const App = () => {
         <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)"}}>
             {/* Geocoding search bar and current weather display */}
             <div className="p-3 pb-1">
-                <Geocoding sendData={setGeoData} darkMode={DModeFlag}/>
+                <Geocoding sendData={setGeoData} darkMode={DModeFlag} onSelect={addRecentSearch}/>
                     {geoData && (
                     <>
                     <Weather
@@ -253,7 +277,19 @@ const App = () => {
                                         Knots
                                     </label>
                                 </div>
-                        
+
+                                <div>
+                                    <h4>Temperature Units:</h4>
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name="TempUnitRadios" id="TempUnitRadios1" onClick={() => setTempUnitFlag(false)} defaultChecked></input>
+                                        <label className="form-check-label" htmlFor="TempUnitRadios1">°C (Celsius)</label>
+                                    </div>
+                                    <div className="form-check">
+                                        <input className="form-check-input" type="radio" name="TempUnitRadios" id="TempUnitRadios2" onClick={() => setTempUnitFlag(true)}></input>
+                                        <label className="form-check-label" htmlFor="TempUnitRadios2">°F (Fahrenheit)</label>
+                                    </div>
+                                </div>
+
                                 <div>
                                     <h4>Vessel Settings:</h4>
                                     <div>
@@ -307,8 +343,32 @@ const App = () => {
                         </>
                         }
                         {/* Button to generate PDF report of current weather conditions, only shown if weather and geocoding data are available */}
+                        {recentSearches.length > 0 && (
+                            <div className="mb-3">
+                                <h5 className={DModeFlag ? "fw-bold text-light mb-2" : "fw-bold text-dark mb-2"} style={{letterSpacing:'0.03em'}}>Recent Searches</h5>
+                                <div className="d-flex flex-wrap gap-2 justify-content-start">
+                                    {recentSearches.map((item) => (
+                                        <button
+                                            key={item.id}
+                                            type="button"
+                                            className={DModeFlag ? "btn btn-dark rounded-pill px-4 py-2" : "btn btn-light rounded-pill px-4 py-2 shadow-sm"}
+                                            style={{fontSize:'0.95rem', display:'flex', alignItems:'center', gap:'8px', maxWidth:'240px'}}
+                                            title={item.name + ", " + item.admin1 + ", " + item.country}
+                                            onClick={() => { setGeoData(item); addRecentSearch(item); }}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <span style={{overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{item.name}, {item.admin1}</span>
+                                            <span
+                                                onClick={(e) => { e.stopPropagation(); removeRecentSearch(item.id); }}
+                                                style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'rgba(0,0,0,0.15)', fontSize:'12px', flexShrink:0}}
+                                            >✕</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         {weatherData && geoData && (
-                            <PdfReport weatherData={weatherData} geoData={geoData} darkMode={DModeFlag}/>
+                            <PdfReport weatherData={weatherData} geoData={geoData} darkMode={DModeFlag} tempUnitFlag={TempUnitFlag}/>
                         )}
                         <>
                             {/*forecast metric buttons displayed in a grid*/}
@@ -319,9 +379,9 @@ const App = () => {
                                 <ForecastButton
                                     
                                     safetynum={0}
-                                    numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
-                                    units={"°C"}
-                                    text={"Feels like: " + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
+                                    numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + toTemp(weatherData.forecast.current[2][1]) : "N/A"}
+                                    units={tempUnit}
+                                    text={"Feels like: " + (weatherData ? toTemp(weatherData.forecast.current[7][1]) : "N/A") + tempUnit }
                                     click={() =>setModalClick("Temperature")}
                                     darkMode={DModeFlag}
                                 />
@@ -348,10 +408,10 @@ const App = () => {
                                 {/*wind direction button*/}
                                 <ForecastButton
                                     safetynum={0}
-                                    // this needs to be an arrow graphic
                                     numval={weatherData ? weatherData.forecast.current[5][1] : "N/A"}
                                     units={"°"}
                                     text={"Wind Direction"}
+                                    direction={weatherData ? weatherData.forecast.current[5][1] : null}
                                     click={() =>setModalClick("Wind Direction")}
                                     darkMode={DModeFlag}
                                 />
@@ -386,6 +446,7 @@ const App = () => {
                                     numval={weatherData ? weatherData.marine.current[3][1] : "N/A"}
                                     units={"°"}
                                     text={"Wave Direction"}
+                                    direction={weatherData ? weatherData.marine.current[3][1] : null}
                                     click={() =>setModalClick("Wave Direction")}
                                     darkMode={DModeFlag}
                                 />
@@ -396,6 +457,7 @@ const App = () => {
                                     numval={weatherData ? weatherData.marine.current[4][1] : "N/A"}
                                     units={"m"}
                                     text={"Sea Level Height"}
+                                    sparkline={weatherData ? (() => { const times = weatherData.marine.hourly[0][1]; const vals = weatherData.marine.hourly[2][1]; const now = new Date(); let i = times.findIndex(t => new Date(t) >= now); if (i < 0) i = 0; return vals.slice(i, i + 24); })() : null}
                                     click={() =>setModalClick("Sea Level Height")}
                                     darkMode={DModeFlag}
                                 />
@@ -403,8 +465,8 @@ const App = () => {
                                 {/*sea surface temperature button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("seaTemp", parseFloat(weatherData ? weatherData.marine.current[5][1] : 0))}
-                                    numval={weatherData ? weatherData.marine.current[5][1] : "N/A"}
-                                    units={"°C"}
+                                    numval={weatherData ? toTemp(weatherData.marine.current[5][1]) : "N/A"}
+                                    units={tempUnit}
                                     text={"Sea Surface Temperature"}
                                     click={() =>setModalClick("Sea Surface Temperature")}
                                     darkMode={DModeFlag}
@@ -416,6 +478,7 @@ const App = () => {
                                     numval={weatherData ? weatherData.marine.current[6][1] : "N/A"}
                                     units={"°"}
                                     text={"Swell Direction"}
+                                    direction={weatherData ? weatherData.marine.current[6][1] : null}
                                     click={() =>setModalClick("Swell Direction")}
                                     darkMode={DModeFlag}
                                 />
@@ -463,7 +526,7 @@ const App = () => {
                                         <div className={DModeFlag ? 'modal-body text-light' : 'modal-body text-dark'}>
                                             {/*render foreccast modal depending on which forecast button was clicked, only if weather and geocoding data are available*/}
                                             {weatherData && geoData && 
-                                                <ForecastModal wData={weatherData} modalClick={modalClick} darkMode={DModeFlag}/>
+                                                <ForecastModal wData={weatherData} modalClick={modalClick} darkMode={DModeFlag} tempUnitFlag={TempUnitFlag}/>
                                             }
                                         </div>
                                     </div>

@@ -26,25 +26,28 @@ import FutureWeather from "./futureWeather"
 
 
 // ForecastModal component that displays detailed weather information based on the selected modal click
-const ForecastModal = ({ wData, modalClick, darkMode }) => {
+const ForecastModal = ({ wData, modalClick, darkMode, tempUnitFlag }) => {
     if (!wData || !modalClick) return null;
 
     const f = wData.forecast;
     const m = wData.marine;
+    const toTemp = (c) => tempUnitFlag ? Math.round((parseFloat(c) * 9/5 + 32) * 10) / 10 : c;
+    const tUnit = tempUnitFlag ? '°F' : '°C';
+    const convertArr = (arr) => arr ? arr.map(v => v == null ? null : toTemp(v)) : arr;
 
 
     
     //atmospheric forecasts
     if (modalClick === "Temperature") return (
         <FutureWeather
-            currentVal={f.current[2][1]}
-            currentLabel={"Wind Chill: feels like " + f.current[7][1] + "°C"}
+            currentVal={toTemp(f.current[2][1])}
+            currentLabel={"Wind Chill: feels like " + toTemp(f.current[7][1]) + tUnit}
             DailyTimeArr={f.daily[0][1]}
-            DailyValArr={f.daily[1][1]}
+            DailyValArr={convertArr(f.daily[1][1])}
             DailyIconArr={f.daily[7][1]}
             HourlyTimeArr={f.hourly[0][1]}
-            HourlyValArr={f.hourly[1][1]}
-            units="°C"
+            HourlyValArr={convertArr(f.hourly[1][1])}
+            units={tUnit}
             darkMode={darkMode}
         />
     );
@@ -168,13 +171,13 @@ const ForecastModal = ({ wData, modalClick, darkMode }) => {
     );
     if (modalClick === "Sea Surface Temperature") return (
         <FutureWeather
-            currentVal={m.current[5][1]}
+            currentVal={toTemp(m.current[5][1])}
             currentLabel={"Sea Surface Temperature"}
             DailyTimeArr={m.daily[0][1]}
             DailyValArr={m.daily[1][1]}
             HourlyTimeArr={m.hourly[0][1]}
-            HourlyValArr={m.hourly[6][1]}
-            units="°C"
+            HourlyValArr={convertArr(m.hourly[6][1])}
+            units={tUnit}
             darkMode={darkMode}
         />
     );
