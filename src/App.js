@@ -13,7 +13,6 @@ import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import ForecastModal from './forecastModal';
 import PdfReport from './PdfReport';
-
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -27,16 +26,22 @@ L.Icon.Default.mergeOptions({
 });
 
 const App = () => {
+
+    //data received from geocoding and weather components
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
+
+    //UI state variables
     const [modalClick, setModalClick] = useState(null);
     const [DModeFlag, setDModeFlag] = useState(false);
     const [WindUnitFlag, setWindUnitFlag] = useState(false);
     const [BoatSizeFlag, setBoatSizeFlag] = useState(false);
+
+    //vessel details set in settings
     const [boatLength, setBoatLength] = useState('');
     const [freeboard, setFreeboard] = useState('');
 
-
+    //lookup tables for weather codes
     const weatherLookup = {
     0:  { label: "Clear Sky",  icon: "☀️"  },
     1: {label: "Mainly clear", icon: "☁️" },
@@ -68,6 +73,8 @@ const App = () => {
     99:	{ label: "Thunderstorm with slight and heavy hail", icon: "⛈️" }
     }
 
+    //converts weather parameters into safety levels for sailing recommendation
+    // 0 = safe or no value, 1 = acceptable, 2 = caution advised, 3 = dangerous
     const safetyLookup = (condition, val) => {
         switch (condition){
             case "windSpeed":
@@ -140,12 +147,14 @@ const App = () => {
             
         }
     }
-
+            //generates sailing recommendation based on weather conditions and vessel details, returns safety level and reasons for caution
             const getSailingRecommendation = () => {
 
+                //check if weather data and vessel details are available
                 if (!weatherData || !weatherData.marine.current[2][1]) return null;
                 if (!boatLength || !freeboard) return { level: 0, reasons: [] };
 
+                //extract relevant weather parameters
                 const wind   = parseFloat(weatherData.forecast.current[4][1]);
                 const gusts  = parseFloat(weatherData.forecast.current[6][1]);
                 const waves  = parseFloat(weatherData.marine.current[2][1]);
@@ -185,7 +194,7 @@ const App = () => {
             };
 
 
-
+    //component to update the map view and marker based on selected location
     function UpdateMap(props) {
         const map = useMap();
 
@@ -198,9 +207,12 @@ const App = () => {
     }
 //normal: #cbd2e3
 //dark bg: #234178
+
+    //main app component
     return (
         <>
         <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)"}}>
+            {/* Geocoding search bar and current weather display */}
             <div className="p-3 pb-1">
                 <Geocoding sendData={setGeoData} darkMode={DModeFlag}/>
                     {geoData && (
@@ -215,12 +227,14 @@ const App = () => {
                 )}
             </div>
  
-     
+            {/* Tab content for settings, forecasts, and map */}
             <div className='tab-content pb-4' id="app-tabcontent" style={{color: DModeFlag?"whitesmoke":"black"}}>
                 <div className="tab-pane p-3" id="settings">
                     <div className={DModeFlag ? "card mx-auto p-3 m-2 bg-dark" : "card mx-auto p-3 m-2 bg-light"} style={{color: DModeFlag?"whitesmoke":"black"}}>
                         <h3>Settings</h3>
                         <div className="d-grid gap-3" >
+
+                            {/* Dark mode toggle, wind speed unit selection, and vessel dimension settings */}
                             <div className="form-check form-switch">
                                 <input className="form-check-input" type="checkbox" id="DarkmodeSwitchCheck" onClick={() => setDModeFlag(!DModeFlag)}></input>
                                 <label className="form-check-label" htmlFor="DarkmodeSwitchCheck">Dark Mode</label>
@@ -266,10 +280,14 @@ const App = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Forecast tab with weather variables displayed as buttons, which open modals with more detailed information. Also includes a sailing recommendation based on weather conditions and vessel details. */}
                 <div className='tab-pane show active' id="forecasts">
                     <div className={"container-fluid p-3"}>
                         {!geoData &&
                             <>
+
+                            {/* Alert prompting user to select a location if no geocoding data is available */}
                             <div className='alert alert-info alert-dismissable show'>
                                 <img src={warningLogo} className="bi me-2" width="15"/>
                                 <span>No location selected! Enter a location in the search bar or use GPS to fetch weather data.</span>
@@ -279,6 +297,8 @@ const App = () => {
                         }
                         {weatherData && !weatherData.marine.current[2][1] &&
                         <>
+
+                        {/* Alert indicating that marine weather data is not available for the selected location */}
                         <div className="alert alert-warning alert-dismissable show">
                             <img src={warningLogo} className="bi me-2" width="15"/>
                             <span>Marine weather conditions not detected at this location.</span>
@@ -286,14 +306,18 @@ const App = () => {
                         </div>
                         </>
                         }
+                        {/* Button to generate PDF report of current weather conditions, only shown if weather and geocoding data are available */}
                         {weatherData && geoData && (
                             <PdfReport weatherData={weatherData} geoData={geoData} darkMode={DModeFlag}/>
                         )}
                         <>
+                            {/*forecast metric buttons displayed in a grid*/}
                             <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center p-1">
                                 {weatherData &&
                                 <>
+                                {/*temperature button with weather icon, opens modal with detailed forecast information*/}
                                 <ForecastButton
+                                    
                                     safetynum={0}
                                     numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
                                     units={"°C"}
@@ -301,6 +325,7 @@ const App = () => {
                                     click={() =>setModalClick("Temperature")}
                                     darkMode={DModeFlag}
                                 />
+                                {/*precipitation button, opens modal with detailed forecast information*/}
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.forecast.current[3][1] : "N/A"}
@@ -309,7 +334,8 @@ const App = () => {
                                     click={() =>setModalClick("Precipitation")}
                                     darkMode={DModeFlag}
                                 />
-
+                                
+                                {/*wind speed button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("windSpeed", parseFloat(weatherData ? weatherData.forecast.current[4][1] : 0))}
                                     numval={weatherData ? weatherData.forecast.current[4][1] : "N/A"}
@@ -318,6 +344,8 @@ const App = () => {
                                     click={() =>WindUnitFlag?setModalClick("Wind Speed(kn)"):setModalClick("Wind Speed(mph)")}
                                     darkMode={DModeFlag}
                                 />
+                    
+                                {/*wind direction button*/}
                                 <ForecastButton
                                     safetynum={0}
                                     // this needs to be an arrow graphic
@@ -327,6 +355,8 @@ const App = () => {
                                     click={() =>setModalClick("Wind Direction")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/**gust speed button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("windGust", parseFloat(weatherData ? weatherData.forecast.current[6][1] : 0))}
                                     numval={weatherData ? weatherData.forecast.current[6][1] : "N/A"}
@@ -339,6 +369,8 @@ const App = () => {
                                 }
                                 {weatherData && weatherData.marine.current[2][1] &&
                                 <>
+
+                                {/*wave height button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("waveHeight", parseFloat(weatherData ? weatherData.marine.current[2][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[2][1] : "N/A"}
@@ -347,6 +379,8 @@ const App = () => {
                                     click={() =>setModalClick("Wave Height")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/*wave direction button*/}
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.marine.current[3][1] : "N/A"}
@@ -355,6 +389,8 @@ const App = () => {
                                     click={() =>setModalClick("Wave Direction")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/*sea level height button*/}
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.marine.current[4][1] : "N/A"}
@@ -363,6 +399,8 @@ const App = () => {
                                     click={() =>setModalClick("Sea Level Height")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/*sea surface temperature button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("seaTemp", parseFloat(weatherData ? weatherData.marine.current[5][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[5][1] : "N/A"}
@@ -371,6 +409,8 @@ const App = () => {
                                     click={() =>setModalClick("Sea Surface Temperature")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/*swell direction button*/}
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.marine.current[6][1] : "N/A"}
@@ -379,6 +419,8 @@ const App = () => {
                                     click={() =>setModalClick("Swell Direction")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/*swell height button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("swellHeight", parseFloat(weatherData ? weatherData.marine.current[7][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[7][1] : "N/A"}
@@ -387,6 +429,8 @@ const App = () => {
                                     click={() =>setModalClick("Swell Height")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/*wave period button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("wavePeriod", parseFloat(weatherData ? weatherData.marine.current[8][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[8][1] ?? "N/A" : "N/A"}
@@ -395,6 +439,8 @@ const App = () => {
                                     click={() => setModalClick("Wave Period")}
                                     darkMode={DModeFlag}
                                 />
+
+                                {/*swell period button*/}
                                 <ForecastButton
                                     safetynum={safetyLookup("wavePeriod", parseFloat(weatherData ? weatherData.marine.current[9][1] : 0))}
                                     numval={weatherData ? weatherData.marine.current[9][1] ?? "N/A" : "N/A"}
@@ -405,6 +451,8 @@ const App = () => {
                                 />
                                 </>}
                             </div>
+
+                            {/*forecast detail modal*/}
                             <div className='modal' id="fModal">
                                 <div className="modal-dialog modal-lg modal-fullscreen-md-down">
                                     <div className={DModeFlag ? 'modal-content bg-dark text-light' :'modal-content bg-light'}>
@@ -413,6 +461,7 @@ const App = () => {
                                              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" data-bs-theme={DModeFlag ? "dark": "light"}></button>
                                         </div>
                                         <div className={DModeFlag ? 'modal-body text-light' : 'modal-body text-dark'}>
+                                            {/*render foreccast modal depending on which forecast button was clicked, only if weather and geocoding data are available*/}
                                             {weatherData && geoData && 
                                                 <ForecastModal wData={weatherData} modalClick={modalClick} darkMode={DModeFlag}/>
                                             }
@@ -424,7 +473,7 @@ const App = () => {
 
 
 
-                        
+                        {/*sailing recommendation banner*/}
                         {weatherData && weatherData.marine.current[2][1] && (() => {
                             const result = getSailingRecommendation();
                             if (result === null) return null;
@@ -443,8 +492,7 @@ const App = () => {
                             );
                         })()}
 
-
-                    
+                        
                         <div id="LineChart" className={"hidden"}>
                             {weatherData &&(
                                 <>
@@ -456,13 +504,20 @@ const App = () => {
                                     
                                 />
                                 </>
+
                             )}
+
+                        
                         </div>
                     </div>
                 </div>
+
+                {/*map tab with leaflet map centerd on the selected location*/}
                 <div className="tab-pane" id="map">
                     <div className="container-fluid p-3">
                         <div className='h-100 w-100'>
+
+                            {/*default map center is set to London, if geocoding data is available it centers on the selected location*/}
                             <MapContainer center={geoData ?[parseFloat(geoData.latitude), parseFloat(geoData.longitude)] : [51.5, -0.1]} zoom={10} scrollWheelZoom={true} style={{height:"80vh"}}>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -479,6 +534,7 @@ const App = () => {
             
         </div>
         <div>
+            {/*bottom navigation bar with tabs for settings, forecasts, and map*/}
             <nav className={DModeFlag ? "navbar fixed-bottom bg-dark justify-content-center" : "navbar fixed-bottom bg-light justify-content-center"}>
                 <ul className="nav nav-pills justify-content-center row" role="tablist">
                     <li className={DModeFlag ? "nav-item text-light col justify-content-center text-center bg-dark" : "nav-item nav-light col justify-content-center text-center"}>
