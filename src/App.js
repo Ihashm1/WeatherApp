@@ -229,19 +229,6 @@ const AppInner = () => {
                                 <label className="form-check-label" htmlFor="DarkmodeSwitchCheck">Dark Mode</label>
                             </div>
                             <div>
-                                <h4>Wind Speed Units:</h4>
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios1" onClick={() => setSpeedUnit('mph')} defaultChecked></input>
-                                    <label className="form-check-label" htmlFor="WindUnitRadios1">
-                                        MPH
-                                    </label>
-                                </div>
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="WindUnitRadios" id="WindUnitRadios2" onClick={() => setSpeedUnit('kts')}></input>
-                                    <label className="form-check-label" htmlFor="WindUnitRadios2">
-                                        Knots
-                                    </label>
-                                </div>
                         
                                 <div>
                                     <p>Boat length: (metres)</p>
@@ -363,11 +350,13 @@ const AppInner = () => {
                                     className="btn shadow-sm rounded-5 p-0"
                                     type="button" data-bs-toggle="modal" data-bs-target="#fModal"
                                 >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px"}}>
-                                        <BeaufortGauge mph={parseFloat(weatherData.forecast.current[4][1])} size={86} />
-                                        <span style={{fontSize:"0.9rem",fontWeight:800,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[4][1]))}</span>
-                                        <span style={{fontSize:"0.9rem",fontWeight:700,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>{convertSpeed(weatherData.forecast.current[4][1])} {speedLabel()}</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wind Speed</small>
+                                    <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
+                                        <div className="col mx-auto">
+                                            <BeaufortGauge mph={parseFloat(weatherData.forecast.current[4][1])} size={65} />
+                                            <span style={{fontSize:"0.8rem",fontWeight:800,display:"block",lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[4][1]))}</span>
+                                        </div>
+                                        <h1 className="col mx-auto fw-semibold mb-0">{convertSpeed(weatherData.forecast.current[4][1])} {speedLabel()}</h1>
+                                        <h5 className="col mx-auto">Wind Speed</h5>
                                     </div>
                                 </button>
 
@@ -378,10 +367,10 @@ const AppInner = () => {
                                     className="btn shadow-sm rounded-5 p-0"
                                     type="button" data-bs-toggle="modal" data-bs-target="#fModal"
                                 >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px",color: DModeFlag ? "white" : "inherit"}}>
-                                        <CompassRose degrees={weatherData.forecast.current[5][1]} size={76} />
-                                        <span className="fw-bold" style={{fontSize:"1rem",lineHeight:1}}>{weatherData.forecast.current[5][1]}°</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wind Direction</small>
+                                    <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
+                                        <CompassRose degrees={weatherData.forecast.current[5][1]} size={60} />
+                                        <h1 className="col mx-auto fw-semibold mb-0">{weatherData.forecast.current[5][1]}°</h1>
+                                        <h5 className="col mx-auto">Wind Direction</h5>
                                     </div>
                                 </button>
 
@@ -393,11 +382,13 @@ const AppInner = () => {
                                     className="btn shadow-sm rounded-5 p-0"
                                     type="button" data-bs-toggle="modal" data-bs-target="#fModal"
                                 >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px"}}>
-                                        <BeaufortGauge mph={parseFloat(weatherData.forecast.current[6][1])} size={86} />
-                                        <span style={{fontSize:"0.9rem",fontWeight:800,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[6][1]))}</span>
-                                        <span style={{fontSize:"0.9rem",fontWeight:700,lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>{convertSpeed(weatherData.forecast.current[6][1])} {speedLabel()}</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wind Gusts</small>
+                                    <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
+                                        <div className="col mx-auto">
+                                            <BeaufortGauge mph={parseFloat(weatherData.forecast.current[6][1])} size={65} />
+                                            <span style={{fontSize:"0.8rem",fontWeight:800,display:"block",lineHeight:1,color: DModeFlag ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)"}}>Bft {toBeaufort(parseFloat(weatherData.forecast.current[6][1]))}</span>
+                                        </div>
+                                        <h1 className="col mx-auto fw-semibold mb-0">{convertSpeed(weatherData.forecast.current[6][1])} {speedLabel()}</h1>
+                                        <h5 className="col mx-auto">Wind Gusts</h5>
                                     </div>
                                 </button>
                                 </>
@@ -419,10 +410,10 @@ const AppInner = () => {
                                     className="btn shadow-sm rounded-5 p-0"
                                     type="button" data-bs-toggle="modal" data-bs-target="#fModal"
                                 >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px",color: DModeFlag ? "white" : "inherit"}}>
-                                        <CompassRose degrees={weatherData.marine.current[3][1]} size={76} />
-                                        <span className="fw-bold" style={{fontSize:"1rem",lineHeight:1}}>{weatherData.marine.current[3][1]}°</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wave Direction</small>
+                                    <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
+                                        <CompassRose degrees={weatherData.marine.current[3][1]} size={60} />
+                                        <h1 className="col mx-auto fw-semibold mb-0">{weatherData.marine.current[3][1]}°</h1>
+                                        <h5 className="col mx-auto">Wave Direction</h5>
                                     </div>
                                 </button>
 
@@ -433,14 +424,16 @@ const AppInner = () => {
                                     className="btn shadow-sm rounded-5 p-0"
                                     type="button" data-bs-toggle="modal" data-bs-target="#fModal"
                                 >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100 px-2" style={{color: DModeFlag ? "white" : "inherit"}}>
-                                        <h1 className="fw-semibold mb-0">{convertHeight(weatherData.marine.current[4][1])}{heightLabel()}</h1>
-                                        <TideSparkline
-                                            values={weatherData.marine.hourly[2][1]}
-                                            times={weatherData.marine.hourly[0][1]}
-                                            size={{w:130, h:36}}
-                                        />
-                                        <small>Sea Level Height</small>
+                                    <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
+                                        <h1 className="col mx-auto fw-semibold mb-0">{convertHeight(weatherData.marine.current[4][1])}{heightLabel()}</h1>
+                                        <div className="col mx-auto">
+                                            <TideSparkline
+                                                values={weatherData.marine.hourly[2][1]}
+                                                times={weatherData.marine.hourly[0][1]}
+                                                size={{w:130, h:36}}
+                                            />
+                                        </div>
+                                        <h5 className="col mx-auto">Sea Level Height</h5>
                                     </div>
                                 </button>
 
@@ -460,10 +453,10 @@ const AppInner = () => {
                                     className="btn shadow-sm rounded-5 p-0"
                                     type="button" data-bs-toggle="modal" data-bs-target="#fModal"
                                 >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px",color: DModeFlag ? "white" : "inherit"}}>
-                                        <CompassRose degrees={weatherData.marine.current[6][1]} size={76} />
-                                        <span className="fw-bold" style={{fontSize:"1rem",lineHeight:1}}>{weatherData.marine.current[6][1]}°</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Swell Direction</small>
+                                    <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
+                                        <CompassRose degrees={weatherData.marine.current[6][1]} size={60} />
+                                        <h1 className="col mx-auto fw-semibold mb-0">{weatherData.marine.current[6][1]}°</h1>
+                                        <h5 className="col mx-auto">Swell Direction</h5>
                                     </div>
                                 </button>
 
