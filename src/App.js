@@ -13,12 +13,6 @@ import { MapContainer, TileLayer, useMap, Marker } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import ForecastModal from './forecastModal';
 import PdfReport from './PdfReport';
-import CompassRose from './CompassRose';
-import BeaufortGauge, { toBeaufort } from './BeaufortGauge';
-import SunriseSunsetCard from './SunriseSunsetBar';
-import TideSparkline from './TideSparkline';
-import { UnitProvider, useUnits } from './UnitContext';
-import './App.css';
 
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -32,15 +26,16 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
-const AppInner = () => {
+const App = () => {
     const [geoData, setGeoData] = useState('');
     const [weatherData, setWeatherData] = useState('');
     const [modalClick, setModalClick] = useState(null);
     const [DModeFlag, setDModeFlag] = useState(false);
+    const [WindUnitFlag, setWindUnitFlag] = useState(false);
+    const [BoatSizeFlag, setBoatSizeFlag] = useState(false);
     const [boatLength, setBoatLength] = useState('');
     const [freeboard, setFreeboard] = useState('');
-    const { convertTemp, tempLabel, convertSpeed, speedLabel, convertHeight, heightLabel,
-            tempUnit, setTempUnit, speedUnit, setSpeedUnit, heightUnit, setHeightUnit } = useUnits();
+
 
     const weatherLookup = {
     0:  { label: "Clear Sky",  icon: "☀️"  },
@@ -201,6 +196,8 @@ const AppInner = () => {
                 <Marker position={props.center}/>
             );
     }
+//normal: #cbd2e3
+//dark bg: #234178
     return (
         <>
         <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)"}}>
@@ -242,41 +239,27 @@ const AppInner = () => {
                                         Knots
                                     </label>
                                 </div>
-                            </div>
-                            <div>
-                                <h4>Boat Size:</h4>
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios1" onClick={() => setBoatSizeFlag(true)} defaultChecked></input>
-                                    <label className="form-check-label" htmlFor="BoatSizeRadios1">
-                                        Passenger ship
-                                    </label>
-                                </div>
-                                <div className="form-check">
-                                    <input className="form-check-input" type="radio" name="BoatSizeRadios" id="BoatSizeRadios2" onClick={() => setBoatSizeFlag(false)}></input>
-                                    <label className="form-check-label" htmlFor="BoatSizeRadios2">
-                                        Cargo ship
-                                    </label>
-                                </div>
-                            <div>
-                                <h4>Vessel Settings:</h4>
+                        
                                 <div>
-                                  <p> Boat length: (metres)</p>
-                                  <input
-                                    type="number"
-                                    placeholder = "0"
-                                    value = {boatLength}
-                                    onChange={(e) => setBoatLength(e.target.value)}
-                                    />
-
-                                    <p>Freeboard Height: (metres)</p>
+                                    <h4>Vessel Settings:</h4>
+                                    <div>
+                                        <p> Boat length: (metres)</p>
                                         <input
-                                        type ="number"
-                                        placeholder = "0"
-                                        value={freeboard}
-                                        onChange={(e) => setFreeboard(e.target.value)}
-                                        />
+                                            type="number"
+                                            placeholder = "0"
+                                            value = {boatLength}
+                                            onChange={(e) => setBoatLength(e.target.value)}
+                                            />
 
-                                </div>
+                                            <p>Freeboard Height: (metres)</p>
+                                                <input
+                                                type ="number"
+                                                placeholder = "0"
+                                                value={freeboard}
+                                                onChange={(e) => setFreeboard(e.target.value)}
+                                                />
+                                            
+                                    </div>
 
                             </div>
                             </div>
@@ -310,18 +293,14 @@ const AppInner = () => {
                             <div className="row row-cols-2 row-cols-md-4 row-gap-2 column-gap-2 mx-auto justify-content-center p-1">
                                 {weatherData &&
                                 <>
-                                {/* Temperature card — clean, no sunrise bar */}
-                                <button
-                                    onClick={() => setModalClick("Temperature")}
-                                    style={{height:"40vw", width:"40vw", maxWidth:"180px", maxHeight:"180px", backgroundColor: DModeFlag ? "rgb(110,164,168)" : "rgba(186,250,255,1)"}}
-                                    className="btn shadow-sm rounded-5 p-0"
-                                    type="button" data-bs-toggle="modal" data-bs-target="#fModal"
-                                >
-                                    <div className="row w-100 h-100 text-center align-items-center mx-auto p-0 row-cols-1" style={{color: DModeFlag ? "white" : "inherit"}}>
-                                        <h1 className="col mx-auto fw-semibold">{weatherLookup[weatherData.forecast.current[8][1]].icon} {convertTemp(weatherData.forecast.current[2][1])}{tempLabel()}</h1>
-                                        <h5 className="col mx-auto">Feels like: {convertTemp(weatherData.forecast.current[7][1])}{tempLabel()}</h5>
-                                    </div>
-                                </button>
+                                <ForecastButton
+                                    safetynum={0}
+                                    numval={weatherData ? weatherLookup[weatherData.forecast.current[8][1]].icon + " " + weatherData.forecast.current[2][1] : "N/A"}
+                                    units={"°C"}
+                                    text={"Feels like: " + (weatherData ?  weatherData.forecast.current[7][1]: "N/A") + "°C" }
+                                    click={() =>setModalClick("Temperature")}
+                                    darkMode={DModeFlag}
+                                />
                                 <ForecastButton
                                     safetynum={0}
                                     numval={weatherData ? weatherData.forecast.current[3][1] : "N/A"}
@@ -361,93 +340,85 @@ const AppInner = () => {
                                 {weatherData && weatherData.marine.current[2][1] &&
                                 <>
                                 <ForecastButton
-                                    safetynum={safetyLookup("waveHeight", parseFloat(weatherData.marine.current[2][1]))}
-                                    numval={convertHeight(weatherData.marine.current[2][1])}
-                                    units={heightLabel()}
+                                    safetynum={safetyLookup("waveHeight", parseFloat(weatherData ? weatherData.marine.current[2][1] : 0))}
+                                    numval={weatherData ? weatherData.marine.current[2][1] : "N/A"}
+                                    units={"m"}
                                     text={"Wave Height"}
                                     click={() =>setModalClick("Wave Height")}
                                     darkMode={DModeFlag}
                                 />
-                                {/* Wave Direction */}
-                                <button
-                                    onClick={() => setModalClick("Wave Direction")}
-                                    style={{height:"40vw", width:"40vw", maxWidth:"180px", maxHeight:"180px", backgroundColor: DModeFlag ? "rgb(110,164,168)" : "rgba(186,250,255,1)"}}
-                                    className="btn shadow-sm rounded-5 p-0"
-                                    type="button" data-bs-toggle="modal" data-bs-target="#fModal"
-                                >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px",color: DModeFlag ? "white" : "inherit"}}>
-                                        <CompassRose degrees={weatherData.marine.current[3][1]} size={76} />
-                                        <span className="fw-bold" style={{fontSize:"1rem",lineHeight:1}}>{weatherData.marine.current[3][1]}°</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Wave Direction</small>
-                                    </div>
-                                </button>
-
-                                {/* Sea Level Height with tide sparkline */}
-                                <button
-                                    onClick={() => setModalClick("Sea Level Height")}
-                                    style={{height:"40vw", width:"40vw", maxWidth:"180px", maxHeight:"180px", backgroundColor: DModeFlag ? "rgb(110,164,168)" : "rgba(186,250,255,1)"}}
-                                    className="btn shadow-sm rounded-5 p-0"
-                                    type="button" data-bs-toggle="modal" data-bs-target="#fModal"
-                                >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100 px-2" style={{color: DModeFlag ? "white" : "inherit"}}>
-                                        <h1 className="fw-semibold mb-0">{convertHeight(weatherData.marine.current[4][1])}{heightLabel()}</h1>
-                                        <TideSparkline
-                                            values={weatherData.marine.hourly[2][1]}
-                                            times={weatherData.marine.hourly[0][1]}
-                                            size={{w:130, h:36}}
-                                        />
-                                        <small>Sea Level Height</small>
-                                    </div>
-                                </button>
-
                                 <ForecastButton
-                                    safetynum={safetyLookup("seaTemp", parseFloat(weatherData.marine.current[5][1]))}
-                                    numval={convertTemp(weatherData.marine.current[5][1])}
-                                    units={tempLabel()}
+                                    safetynum={0}
+                                    numval={weatherData ? weatherData.marine.current[3][1] : "N/A"}
+                                    units={"°"}
+                                    text={"Wave Direction"}
+                                    click={() =>setModalClick("Wave Direction")}
+                                    darkMode={DModeFlag}
+                                />
+                                <ForecastButton
+                                    safetynum={0}
+                                    numval={weatherData ? weatherData.marine.current[4][1] : "N/A"}
+                                    units={"m"}
+                                    text={"Sea Level Height"}
+                                    click={() =>setModalClick("Sea Level Height")}
+                                    darkMode={DModeFlag}
+                                />
+                                <ForecastButton
+                                    safetynum={safetyLookup("seaTemp", parseFloat(weatherData ? weatherData.marine.current[5][1] : 0))}
+                                    numval={weatherData ? weatherData.marine.current[5][1] : "N/A"}
+                                    units={"°C"}
                                     text={"Sea Surface Temperature"}
                                     click={() =>setModalClick("Sea Surface Temperature")}
                                     darkMode={DModeFlag}
                                 />
-
-                                {/* Swell Direction */}
-                                <button
-                                    onClick={() => setModalClick("Swell Direction")}
-                                    style={{height:"40vw", width:"40vw", maxWidth:"180px", maxHeight:"180px", backgroundColor: DModeFlag ? "rgb(110,164,168)" : "rgba(186,250,255,1)"}}
-                                    className="btn shadow-sm rounded-5 p-0"
-                                    type="button" data-bs-toggle="modal" data-bs-target="#fModal"
-                                >
-                                    <div className="d-flex flex-column align-items-center justify-content-center h-100 w-100" style={{gap:"2px",padding:"6px",color: DModeFlag ? "white" : "inherit"}}>
-                                        <CompassRose degrees={weatherData.marine.current[6][1]} size={76} />
-                                        <span className="fw-bold" style={{fontSize:"1rem",lineHeight:1}}>{weatherData.marine.current[6][1]}°</span>
-                                        <small style={{fontSize:"0.72rem",color: DModeFlag ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)"}}>Swell Direction</small>
-                                    </div>
-                                </button>
-
                                 <ForecastButton
-                                    safetynum={safetyLookup("swellHeight", parseFloat(weatherData.marine.current[7][1]))}
-                                    numval={convertHeight(weatherData.marine.current[7][1])}
-                                    units={heightLabel()}
+                                    safetynum={0}
+                                    numval={weatherData ? weatherData.marine.current[6][1] : "N/A"}
+                                    units={"°"}
+                                    text={"Swell Direction"}
+                                    click={() =>setModalClick("Swell Direction")}
+                                    darkMode={DModeFlag}
+                                />
+                                <ForecastButton
+                                    safetynum={safetyLookup("swellHeight", parseFloat(weatherData ? weatherData.marine.current[7][1] : 0))}
+                                    numval={weatherData ? weatherData.marine.current[7][1] : "N/A"}
+                                    units={"m"}
                                     text={"Swell Height"}
                                     click={() =>setModalClick("Swell Height")}
                                     darkMode={DModeFlag}
                                 />
                                 <ForecastButton
-                                    safetynum={safetyLookup("wavePeriod", parseFloat(weatherData.marine.current[8][1] ?? 0))}
-                                    numval={weatherData.marine.current[8][1] ?? "N/A"}
+                                    safetynum={safetyLookup("wavePeriod", parseFloat(weatherData ? weatherData.marine.current[8][1] : 0))}
+                                    numval={weatherData ? weatherData.marine.current[8][1] ?? "N/A" : "N/A"}
                                     units={"s"}
                                     text={"Wave Period"}
                                     click={() => setModalClick("Wave Period")}
                                     darkMode={DModeFlag}
                                 />
                                 <ForecastButton
-                                    safetynum={safetyLookup("wavePeriod", parseFloat(weatherData.marine.current[9][1] ?? 0))}
-                                    numval={weatherData.marine.current[9][1] ?? "N/A"}
+                                    safetynum={safetyLookup("wavePeriod", parseFloat(weatherData ? weatherData.marine.current[9][1] : 0))}
+                                    numval={weatherData ? weatherData.marine.current[9][1] ?? "N/A" : "N/A"}
                                     units={"s"}
                                     text={"Swell Period"}
                                     click={() => setModalClick("Swell Period")}
                                     darkMode={DModeFlag}
                                 />
                                 </>}
+                            </div>
+                            <div className='modal' id="fModal">
+                                <div className="modal-dialog modal-lg modal-fullscreen-md-down">
+                                    <div className={DModeFlag ? 'modal-content bg-dark text-light' :'modal-content bg-light'}>
+                                        <div className={DModeFlag ? 'modal-header text-light' : 'modal-header text-dark'}>
+                                             {modalClick && <h2 className="modal-title fw-bold">{modalClick}</h2>}
+                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" data-bs-theme={DModeFlag ? "dark": "light"}></button>
+                                        </div>
+                                        <div className={DModeFlag ? 'modal-body text-light' : 'modal-body text-dark'}>
+                                            {weatherData && geoData && 
+                                                <ForecastModal wData={weatherData} modalClick={modalClick} darkMode={DModeFlag}/>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </>
 
@@ -507,30 +478,6 @@ const AppInner = () => {
             </div>
             
         </div>
-        {/*
-          Modal is intentionally placed OUTSIDE the main container-fluid div.
-          That div has backdropFilter:"blur(1px)" which creates a CSS stacking context.
-          Any position:fixed element (like a modal) is trapped inside that context, while
-          Bootstrap appends the .modal-backdrop to <body> which is outside it — so the
-          backdrop ends up rendered ON TOP of the modal, blocking all clicks.
-          Keeping the modal here at the root fragment level fixes the z-index ordering.
-          tabIndex="-1" is required by Bootstrap 5 for keyboard focus-trapping to work.
-        */}
-        <div className='modal' id="fModal" tabIndex="-1">
-            <div className="modal-dialog modal-lg modal-fullscreen-md-down">
-                <div className={DModeFlag ? 'modal-content bg-dark text-light' : 'modal-content bg-light'}>
-                    <div className={DModeFlag ? 'modal-header text-light' : 'modal-header text-dark'}>
-                        {modalClick && <h2 className="modal-title fw-bold">{modalClick}</h2>}
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" data-bs-theme={DModeFlag ? "dark" : "light"}></button>
-                    </div>
-                    <div className={DModeFlag ? 'modal-body text-light' : 'modal-body text-dark'}>
-                        {weatherData && geoData &&
-                            <ForecastModal wData={weatherData} modalClick={modalClick} darkMode={DModeFlag}/>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
         <div>
             <nav className={DModeFlag ? "navbar fixed-bottom bg-dark justify-content-center" : "navbar fixed-bottom bg-light justify-content-center"}>
                 <ul className="nav nav-pills justify-content-center row" role="tablist">
@@ -553,10 +500,4 @@ const AppInner = () => {
     );
 };
 
-const App = () => (
-    <UnitProvider>
-        <AppInner />
-    </UnitProvider>
-);
-
-export default App;
+export default App
