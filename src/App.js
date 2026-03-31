@@ -327,14 +327,6 @@ const AppInner = () => {
                                     darkMode={DModeFlag}
                                 />
 
-                                <ForecastButton
-                                    safetynum={safetyLookup("windSpeed", parseFloat(weatherData ? weatherData.forecast.current[4][1] : 0))}
-                                    numval={weatherData ? weatherData.forecast.current[4][1] : "N/A"}
-                                    units={speedUnit}
-                                    text={"Wind Speed"}
-                                    click={() => setModalClick(`Wind Speed(${speedUnit})`)}
-                                    darkMode={DModeFlag}
-                                />
                                 {/* Sunrise / Sunset standalone card — display only, no modal */}
                                 <SunriseSunsetCard
                                     sunrise={weatherData.forecast.daily[4][1]?.[0]}
