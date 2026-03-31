@@ -41,6 +41,26 @@ const App = () => {
     const toTemp = (c) => TempUnitFlag ? Math.round((parseFloat(c) * 9/5 + 32) * 10) / 10 : c;
     const tempUnit = TempUnitFlag ? '°F' : '°C';
 
+    const [recentSearches, setRecentSearches] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('recentSearches') || '[]'); }
+        catch { return []; }
+    });
+    const addRecentSearch = (item) => {
+        setRecentSearches(prev => {
+            const filtered = prev.filter(r => r.id !== item.id);
+            const updated = [item, ...filtered].slice(0, 3);
+            localStorage.setItem('recentSearches', JSON.stringify(updated));
+            return updated;
+        });
+    };
+    const removeRecentSearch = (id) => {
+        setRecentSearches(prev => {
+            const updated = prev.filter(r => r.id !== id);
+            localStorage.setItem('recentSearches', JSON.stringify(updated));
+            return updated;
+        });
+    };
+
     //vessel details set in settings
     const [boatLength, setBoatLength] = useState('');
     const [freeboard, setFreeboard] = useState('');
@@ -218,7 +238,7 @@ const App = () => {
         <div className='container-fluid p-0 pb-5' style={{minHeight:"100vh", backgroundColor: DModeFlag ? "rgba(35, 65, 120, 0.7)" : "rgba(203, 210, 227, 0.7)"}}>
             {/* Geocoding search bar and current weather display */}
             <div className="p-3 pb-1">
-                <Geocoding sendData={setGeoData} darkMode={DModeFlag}/>
+                <Geocoding sendData={setGeoData} darkMode={DModeFlag} onSelect={addRecentSearch}/>
                     {geoData && (
                     <>
                     <Weather
@@ -323,6 +343,30 @@ const App = () => {
                         </>
                         }
                         {/* Button to generate PDF report of current weather conditions, only shown if weather and geocoding data are available */}
+                        {recentSearches.length > 0 && (
+                            <div className="mb-3">
+                                <h5 className={DModeFlag ? "fw-bold text-light mb-2" : "fw-bold text-dark mb-2"} style={{letterSpacing:'0.03em'}}>Recent Searches</h5>
+                                <div className="d-flex flex-wrap gap-2 justify-content-start">
+                                    {recentSearches.map((item) => (
+                                        <button
+                                            key={item.id}
+                                            type="button"
+                                            className={DModeFlag ? "btn btn-dark rounded-pill px-4 py-2" : "btn btn-light rounded-pill px-4 py-2 shadow-sm"}
+                                            style={{fontSize:'0.95rem', display:'flex', alignItems:'center', gap:'8px', maxWidth:'240px'}}
+                                            title={item.name + ", " + item.admin1 + ", " + item.country}
+                                            onClick={() => { setGeoData(item); addRecentSearch(item); }}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <span style={{overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>{item.name}, {item.admin1}</span>
+                                            <span
+                                                onClick={(e) => { e.stopPropagation(); removeRecentSearch(item.id); }}
+                                                style={{display:'inline-flex', alignItems:'center', justifyContent:'center', width:'20px', height:'20px', borderRadius:'50%', background:'rgba(0,0,0,0.15)', fontSize:'12px', flexShrink:0}}
+                                            >✕</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                         {weatherData && geoData && (
                             <PdfReport weatherData={weatherData} geoData={geoData} darkMode={DModeFlag} tempUnitFlag={TempUnitFlag}/>
                         )}
