@@ -55,8 +55,11 @@ const ForecastButton = ({safetynum, numval, units, text, click, darkMode, direct
                 d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
               }
               const area = `${d} L ${pts[pts.length-1][0].toFixed(1)},${h} L ${pts[0][0].toFixed(1)},${h} Z`;
+              const zeroY = max === min ? h / 2 : pad + (1 - (0 - min) / (max - min)) * (h - pad * 2);
+              const clampedZeroY = Math.max(0, Math.min(h, zeroY));
               return (
                 <svg key="spark" width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{display:'block', overflow:'hidden'}}>
+                  <line x1={pad} y1={clampedZeroY} x2={w - pad} y2={clampedZeroY} stroke="currentColor" strokeWidth="1" strokeDasharray="3,3" strokeOpacity="0.5"/>
                   <path d={area} fill="currentColor" fillOpacity="0.18"/>
                   <path d={d} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
